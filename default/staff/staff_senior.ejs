@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Senior Citizens</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Favicon -->
+    <link rel="icon" href="/assets/images/silay.png" type="image/x-icon">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet">
+    <!-- CSS Frameworks -->
+    <link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/icon/feather/css/feather.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/pwd.css">
+    <link rel="stylesheet" href="/assets/css/jquery.mCustomScrollbar.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <style>
+        .modal {
+            z-index: 1050 !important;
+        }
+        .modal-backdrop {
+            z-index: 1040 !important;
+        }
+        .modal-dialog {
+            z-index: 1055 !important;
+        }
+        .action-container {
+            display: flex;
+            gap: 5px;
+        }
+        .action {
+            padding: 5px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .action-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .action:hover {
+            opacity: 0.8;
+        }
+        .action svg {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                        <a class="mobile-menu" id="mobile-collapse" href="#!">
+                            <i class="feather icon-menu"></i>
+                        </a>
+                        <a href="index-1.htm">
+    <span class="logo-text">SILAY CITY</span>
+</a>
+                        <a class="mobile-options">
+                            <i class="feather icon-more-horizontal"></i>
+                        </a>
+                    </div>
+                    <div class="navbar-container container-fluid">
+                        <ul class="nav-left">
+                            <li class="header-search">
+                                <div class="main-search morphsearch-search">
+                                    <div class="input-group">
+                                        <span class="input-group-addon search-close">
+                                            <i class="feather icon-x"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Search...">
+                                        <span class="input-group-addon search-btn">
+                                            <i class="feather icon-search"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#!" onclick="javascript:toggleFullScreen()">
+                                    <i class="feather icon-maximize full-screen"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/add_senior" class="btn btn-primary rounded" id="addSeniorBtn" target="_blank">
+                                    <i class="feather icon-user-plus"></i>ADD SENIOR </a>
+                            </li>
+                        </ul>
+                        <ul class="nav-right"></ul>
+                        <ul class="nav-right">
+                            <li class="user-profile header-notification">
+                                <div class="dropdown-primary dropdown">
+                                    <div class="dropdown-toggle" data-toggle="dropdown">
+                                        <i class="feather icon-chevron-down"></i>
+                                    </div>
+                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+            
+                                        <li>
+                                            <a href="/logout">
+                                                <i class="feather icon-log-out"></i> Logout </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <nav class="pcoded-navbar">
+                        <div class="pcoded-inner-navbar main-menu">
+                            <div class="pcoded-navigatio-lavel">Navigation</div>
+                            <ul class="pcoded-item pcoded-left-item">
+                                <li class="pcoded-hasmenu active pcoded-trigger">
+                                    <a href="javascript:void(0)">
+                                        <span class="pcoded-micon">
+                                            <i class="feather icon-home"></i>
+                                        </span>
+                                        <span class="pcoded-mtext">Dashboard</span>
+                                    </a>
+                                    <ul class="pcoded-submenu">
+                                        <li class="">
+                                            <a href="/Pwd-form">
+                                                <span class="">PDAO</span>
+                                            </a>
+                                        </li>
+                                        <li class="active">
+                                            <a href="/Senior-form">
+                                                <span class="">OSCA</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+                            <div class="main-body">
+                                <div class="page-wrapper">
+
+                                    <div class="container">
+                                        <h1>SENIOR CITIZENS</h1>
+                                        <div class="filter-container">
+                                            <div class="filter-group">
+                                                <label for="barangay-filter">Barangay:</label>
+                                                <select id="barangay-filter" class="form-control">
+                                                    <option value="">All Barangays</option>
+                                                    <% Object.keys(barangays).forEach(barangay => { %>
+                                                        <option value="<%= barangay %>"><%= barangay %></option>
+                                                    <% }) %>
+                                                </select>
+                                            </div>
+                                            <div class="filter-group">
+                                                <label for="purok-filter">Purok:</label>
+                                                <select id="purok-filter" class="form-control" disabled>
+                                                    <option value="">First select a Barangay</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                            
+                                        
+                                        <% if (seniorCitizens && seniorCitizens.length > 0) { %>
+                                            <table id="example" class="display" style="width:100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <!-- <input type="checkbox" id="select-all" aria-label="Select all rows"> -->
+                                                        </th>
+                                                        <th>Full Name</th>
+                                                        <th>Age</th>
+                                                        <th>Barangay</th>
+                                                        <th>Purok</th>
+                                                        <th>Civil Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% seniorCitizens.forEach(senior => { %>
+                                                        <tr>
+                                                            <td>
+                                                                <input type="checkbox" class="row-checkbox" value="<%= senior._id || senior.id %>" aria-label="Select row"
+                                                                    data-phone="<%= (senior.identifying_information.contact_information && senior.identifying_information.contact_information.length && senior.identifying_information.contact_information[0].contact_number) ? senior.identifying_information.contact_information[0].contact_number : '' %>"
+                                                                    data-name="<%= senior.identifying_information.name.first_name + ' ' + senior.identifying_information.name.last_name %>">
+                                                            </td>
+                                                            <td>
+                                                                <%= senior.identifying_information.name.last_name %>
+                                                                <%= senior.identifying_information.name.first_name %> 
+                                                                <%= senior.identifying_information.name.middle_name || '' %>
+                                                            </td>
+                                                            <td><%= senior.identifying_information.age %></td>
+                                                            <td><%= senior.identifying_information.address.barangay %></td>
+                                                            <td><%= senior.identifying_information.address.purok %></td>
+                                                            <td><%= senior.identifying_information.marital_status %></td>
+                                                            <td>
+                                                                <div class="action-container">
+                                                                    <button class="action view-btn" 
+                                                                            aria-label="View" 
+                                                                            data-toggle="modal" data-target="#viewModal"
+                                                                            data-senior='<%= JSON.stringify(senior).replace(/'/g, "&apos;") %>'>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button class="action action-edit edit-btn" 
+                                                                            aria-label="Edit" 
+                                                                            data-toggle="modal" data-target="#editModal"
+                                                                            data-senior='<%= JSON.stringify(senior).replace(/'/g, "&apos;") %>'>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    <% }); %>
+                                                </tbody>
+                                            </table>
+                                            <!-- Button to open SMS modal for selected rows -->
+                                            <div class="mt-3">
+                                                <button id="openSmsForSelected" class="btn btn-success" disabled>
+                                                    <i data-feather="message-circle"></i> Send SMS to selected
+                                                </button>
+                                            </div>
+
+                                            <!-- SMS Modal -->
+                                            <div class="modal fade" id="assistanceModal" tabindex="-1" aria-labelledby="assistanceModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="assistanceModalLabel">
+                                                                <i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS
+                                                            </h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="smsForm">
+                                                                <div class="mb-2">
+                                                                    <label class="form-label">Recipients:</label>
+                                                                    <div id="recipientsList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                                                                        <em>No recipients selected</em>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="sms-template">
+                                                                    <label for="smsMessage" class="form-label">Message:</label>
+                                                                    <textarea id="smsMessage" class="form-control" rows="4">Dear Senior Citizen,
+
+You are eligible for senior citizen benefits including:
+- 20% discount on medicines, medical services & transportation
+- Priority lane access
+- Social pension program
+- Other privileges under RA 9994
+
+Visit your local office to claim your benefits.
+
+Thank you!</textarea>
+                                                                    <small class="text-muted">You can edit this message before sending</small>
+                                                                </div>
+
+                                                                <!-- Character Counter -->
+                                                                <div class="mb-3">
+                                                                    <small class="text-muted">
+                                                                        Characters: <span id="charCount">0</span>/160
+                                                                    </small>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                                <i data-feather="x" style="width: 16px; height: 16px;"></i> Cancel
+                                                            </button>
+                                                            <button type="button" class="btn btn-primary btn-send" id="sendSmsBtn">
+                                                                <i data-feather="send" style="width: 16px; height: 16px;"></i> Send SMS
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="alert alert-info text-center">No senior citizens found.</div>
+                                        <% } %>
+                                    </div>
+                                    
+                                   <!-- View Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalTitle">
+                    <span id="displayLastName"></span>, 
+                    <span id="displayFirstName"></span> 
+                    <span id="displayMiddleName"></span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Top Row: Personal Information + Contact Information -->
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <!-- Left - Personal Information -->
+                    <fieldset class="compact-spacing">
+                        <legend>PERSONAL INFORMATION</legend>
+                        <p class="compact-spacing">
+                            <strong>Address:</strong> 
+                            <span id="displayBarangay"></span>, 
+                            <span id="displayPurok"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Birthday:</strong> 
+                            <span id="displayBirthday"></span> 
+                            (<span id="displayAge"></span> years old)
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Gender:</strong> 
+                            <span id="displayGender"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Marital Status:</strong> 
+                            <span id="displayCivilStatus"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Place of Birth:</strong> 
+                            <span id="displayPlaceOfBirth"></span>
+                        </p>
+                        <p id="displaySpouse" class="compact-spacing" style="display:none;">
+                            <strong>Spouse:</strong> 
+                            <span id="displaySpouseName"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Father:</strong> 
+                            <span id="displayFatherName"></span>
+                        </p>
+                        <p class="no-bottom-margin">
+                            <strong>Mother:</strong> 
+                            <span id="displayMotherName"></span>
+                        </p>
+                    </fieldset>
+                    
+                    <!-- Right - Contact Information -->
+                    <fieldset class="compact-spacing">
+                        <legend>CONTACT INFORMATION</legend>
+                        <div id="displayContacts">
+                            <!-- Contact information will be dynamically inserted here -->
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Middle Row: ID Information + Education & Skills -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <!-- Left - ID Information -->
+                    <fieldset class="compact-spacing">
+                        <legend>ID INFORMATION</legend>
+                        <p class="compact-spacing">
+                            <strong>OSCA ID:</strong> 
+                            <span id="displayOscaId"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>GSIS/SSS:</strong> 
+                            <span id="displayGsisSss"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>Philhealth:</strong> 
+                            <span id="displayPhilhealth"></span>
+                        </p>
+                        <p class="compact-spacing">
+                            <strong>TIN:</strong> 
+                            <span id="displayTin"></span>
+                        </p>
+                        <p class="no-bottom-margin">
+                            <strong>Other Govt ID:</strong> 
+                            <span id="displayOtherGovtId"></span>
+                        </p>
+                    </fieldset>
+                    
+                    <!-- Right - Education & Skills -->
+                    <fieldset class="compact-spacing">
+                        <legend>EDUCATION & SKILLS</legend>
+                        <p class="compact-spacing">
+                            <strong>Education:</strong> 
+                            <span id="displayEducation"></span>
+                        </p>
+                        <p class="no-bottom-margin">
+                            <strong>Skills:</strong> 
+                            <span id="displaySkills"></span>
+                        </p>
+                    </fieldset>
+                </div>
+
+                <!-- Bottom Row: Family Composition + Community Service -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <!-- Left - Family Composition -->
+                    <fieldset class="compact-spacing">
+                        <legend>FAMILY COMPOSITION</legend>
+                        <div id="displayChildren">
+                            <!-- Family composition will be dynamically inserted here -->
+                        </div>
+                    </fieldset>
+
+                    <!-- Right - Community Service -->
+                    <fieldset class="compact-spacing">
+                        <legend>COMMUNITY SERVICE</legend>
+                        <div id="displayCommunityService">
+                            <!-- Community service will be dynamically inserted here -->
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            
+            <div class="modal-footer flex-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Add ASS</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalTitle">Edit Senior Citizen Information</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+                <form id="editResidentForm">
+                    <input type="hidden" id="editResidentId" name="residentId">
+                    
+                    <!-- Personal Information -->
+                    <fieldset class="mb-4">
+                        <legend>PERSONAL INFORMATION</legend>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editFirstName">First Name</label>
+                                    <input type="text" class="form-control" id="editFirstName" name="first_name" required>
+                        </div>
+                </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editMiddleName">Middle Name</label>
+                                    <input type="text" class="form-control" id="editMiddleName" name="middle_name">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editLastName">Last Name</label>
+                                    <input type="text" class="form-control" id="editLastName" name="last_name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editBarangay">Barangay</label>
+                                    <select class="form-control" id="editBarangay" name="barangay" required>
+                                        <option value="">Select Barangay</option>
+                                        <% Object.keys(barangays).forEach(barangay => { %>
+                                            <option value="<%= barangay %>"><%= barangay %></option>
+                                        <% }) %>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editPurok">Purok</label>
+                                    <select class="form-control" id="editPurok" name="purok" required>
+                                        <option value="">Select Purok</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editGender">Gender</label>
+                                    <select class="form-control" id="editGender" name="gender" required>
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                        <option value="Prefer not to say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editBirthday">Birthday</label>
+                                    <input type="date" class="form-control" id="editBirthday" name="birthday" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editAge">Age</label>
+                                    <input type="number" class="form-control" id="editAge" name="age" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="editMaritalStatus">Marital Status</label>
+                                    <select class="form-control" id="editMaritalStatus" name="marital_status" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Single">Single</option>
+                                        <option value="Married">Married</option>
+                                        <option value="Widowed">Widowed</option>
+                                        <option value="Divorced">Divorced</option>
+                                        <option value="Separated">Separated</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editPlaceOfBirth">Place of Birth</label>
+                                    <input type="text" class="form-control" id="editPlaceOfBirth" name="place_of_birth">
+                                </div>
+                            </div>
+                            <div class="col-md-6" id="editSpouseGroup" style="display: none;">
+                                <div class="form-group">
+                                    <label for="editSpouseName">Spouse Name</label>
+                                    <input type="text" class="form-control" id="editSpouseName" name="spouse_name">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- ID Information -->
+                    <fieldset class="mb-4">
+                        <legend>ID INFORMATION</legend>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="editOscaId">OSCA ID</label>
+                                    <input type="text" class="form-control" id="editOscaId" name="osca_id">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="editGsisSss">GSIS/SSS</label>
+                                    <input type="text" class="form-control" id="editGsisSss" name="gsis_sss">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="editPhilhealth">Philhealth</label>
+                                    <input type="text" class="form-control" id="editPhilhealth" name="philhealth">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="editTin">TIN</label>
+                                    <input type="text" class="form-control" id="editTin" name="tin">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    
+                    <!-- Family Information -->
+                    <fieldset class="mb-4">
+                        <legend>FAMILY INFORMATION</legend>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editFatherName">Father's Name</label>
+                                    <input type="text" class="form-control" id="editFatherName" name="father_name">
+                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="editMotherName">Mother's Name</label>
+                                    <input type="text" class="form-control" id="editMotherName" name="mother_name">
+                                </div>
+                </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Contact Information -->
+                    <fieldset class="mb-4">
+                        <legend>CONTACT INFORMATION</legend>
+                        <div id="editContactsContainer">
+                            <!-- Dynamic contact fields will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="addEditContact">+ Add Contact</button>
+                    </fieldset>
+                </form>
+                    </div>
+                    
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="updateBtn">Update Information</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Convert EJS data to JavaScript object
+        const barangaysData = <%- JSON.stringify(barangays) %>;
+        const seniorCitizensData = <%- JSON.stringify(seniorCitizens) %>;
+        
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get select elements
+            const barangaySelect = document.getElementById('barangay-filter');
+            const purokSelect = document.getElementById('purok-filter');
+            
+            // Initialize purok dropdown as disabled
+            purokSelect.disabled = true;
+
+            // Barangay change event handler
+            barangaySelect.addEventListener('change', function() {
+                const selectedBarangay = this.value;
+                purokSelect.innerHTML = '';
+                
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Select Purok';
+                purokSelect.appendChild(defaultOption);
+                
+                purokSelect.disabled = !selectedBarangay;
+                
+                if (selectedBarangay && barangaysData[selectedBarangay]) {
+                    const allOption = document.createElement('option');
+                    allOption.value = 'all';
+                    allOption.textContent = 'All Puroks';
+                    purokSelect.appendChild(allOption);
+                    
+                    barangaysData[selectedBarangay].forEach(purok => {
+                        const option = document.createElement('option');
+                        option.value = purok;
+                        option.textContent = purok;
+                        purokSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Senior Citizen View Modal Handler - using event delegation
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.view-btn')) {
+                    const button = e.target.closest('.view-btn');
+                    try {
+                        const seniorData = JSON.parse(button.getAttribute('data-senior'));
+                        console.log('Senior Data:', seniorData);
+                        
+                        // Name Information
+                        const name = seniorData.identifying_information?.name || {};
+                        document.getElementById('displayFirstName').textContent = name.first_name || 'N/A';
+                        document.getElementById('displayMiddleName').textContent = name.middle_name || '';
+                        document.getElementById('displayLastName').textContent = name.last_name || 'N/A';
+                        if (name.extension) {
+                            document.getElementById('displayLastName').textContent += ` ${name.extension}`;
+                        }
+                        
+                        // Address Information
+                        const address = seniorData.identifying_information?.address || {};
+                        document.getElementById('displayBarangay').textContent = address.barangay || 'N/A';
+                        document.getElementById('displayPurok').textContent = address.purok || 'N/A';
+                        
+                        // Personal Information
+                        const dob = seniorData.identifying_information?.date_of_birth;
+                        document.getElementById('displayBirthday').textContent = dob ? new Date(dob).toLocaleDateString() : 'N/A';
+                        document.getElementById('displayAge').textContent = seniorData.identifying_information?.age || 'N/A';
+                        document.getElementById('displayGender').textContent = seniorData.identifying_information?.gender || 'N/A';
+                        document.getElementById('displayCivilStatus').textContent = seniorData.identifying_information?.marital_status || 'N/A';
+                        document.getElementById('displayPlaceOfBirth').textContent = 
+                            Array.isArray(seniorData.identifying_information?.place_of_birth) ? 
+                            seniorData.identifying_information.place_of_birth.join(', ') : 
+                            'N/A';
+                        
+                        // Spouse Information
+                        if (seniorData.family_composition?.spouse?.name) {
+                            document.getElementById('displaySpouse').style.display = 'block';
+                            document.getElementById('displaySpouseName').textContent = seniorData.family_composition.spouse.name;
+                        } else {
+                            document.getElementById('displaySpouse').style.display = 'none';
+                        }
+                        
+                        // Parent Information
+                        const father = seniorData.family_composition?.father || {};
+                        const mother = seniorData.family_composition?.mother || {};
+                        const fatherName = `${father.first_name || ''} ${father.middle_name || ''} ${father.last_name || ''} ${father.extension || ''}`.trim();
+                        const motherName = `${mother.first_name || ''} ${mother.middle_name || ''} ${mother.last_name || ''}`.trim();
+                        
+                        document.getElementById('displayFatherName').textContent = fatherName || 'N/A';
+                        document.getElementById('displayMotherName').textContent = motherName || 'N/A';
+                        
+                        // Contact Information
+                        const contactsContainer = document.getElementById('displayContacts');
+                        contactsContainer.innerHTML = '';
+                        
+                        if (seniorData.identifying_information?.contacts?.length > 0) {
+                            seniorData.identifying_information.contacts.forEach(contact => {
+                                const contactElement = document.createElement('div');
+                                contactElement.className = 'contact-item';
+                                contactElement.innerHTML = `
+                                    <p><strong>${contact.type ? contact.type.toUpperCase() : 'CONTACT'}:</strong></p>
+                                    <p>Name: ${contact.name || 'N/A'}</p>
+                                    <p>Relationship: ${contact.relationship || 'N/A'}</p>
+                                    <p>Phone: ${contact.phone || 'N/A'}</p>
+                                    ${contact.email ? `<p>Email: ${contact.email}</p>` : ''}
+                                    <hr>
+                                `;
+                                contactsContainer.appendChild(contactElement);
+                            });
+                        } else {
+                            contactsContainer.innerHTML = '<p>No contact information available</p>';
+                        }
+                        
+                        // ID Information
+                        const ids = seniorData.identifying_information || {};
+                        document.getElementById('displayOscaId').textContent = ids.osca_id_number || 'N/A';
+                        document.getElementById('displayGsisSss').textContent = ids.gsis_sss || 'N/A';
+                        document.getElementById('displayPhilhealth').textContent = ids.philhealth || 'N/A';
+                        document.getElementById('displayTin').textContent = ids.tin || 'N/A';
+                        document.getElementById('displayOtherGovtId').textContent = ids.other_govt_id || 'N/A';
+                        
+                        // Family Composition - Children
+                        const childrenContainer = document.getElementById('displayChildren');
+                        childrenContainer.innerHTML = '';
+                        
+                        if (seniorData.family_composition?.children?.length > 0) {
+                            seniorData.family_composition.children.forEach(child => {
+                                const childElement = document.createElement('div');
+                                childElement.className = 'child-item';
+                                childElement.innerHTML = `
+                                    <p><strong>${child.full_name || 'Unnamed Child'}</strong></p>
+                                    <p>Age: ${child.age || 'N/A'}</p>
+                                    <p>Occupation: ${child.occupation || 'N/A'}</p>
+                                    <p>Income: ${child.income || 'N/A'}</p>
+                                    <p>Working Status: ${child.working_status || 'N/A'}</p>
+                                    <hr>
+                                `;
+                                childrenContainer.appendChild(childElement);
+                            });
+                        } else {
+                            childrenContainer.innerHTML = '<p>No children information available</p>';
+                        }
+                        
+                        // Education and Skills
+                        const education = seniorData.education_hr_profile || {};
+                        document.getElementById('displayEducation').textContent = 
+                            Array.isArray(education.educational_attainment) ? 
+                            education.educational_attainment.join(', ') : 'N/A';
+                        document.getElementById('displaySkills').textContent = 
+                            Array.isArray(education.skills) ? 
+                            education.skills.join(', ') : 'N/A';
+                            
+                        // Community Service
+                        const serviceContainer = document.getElementById('displayCommunityService');
+                        serviceContainer.innerHTML = '';
+                        
+                        if (seniorData.community_service?.length > 0) {
+                            seniorData.community_service.forEach(service => {
+                                const serviceElement = document.createElement('p');
+                                serviceElement.textContent = service;
+                                if (service === 'Other' && seniorData.community_service_other_text) {
+                                    serviceElement.textContent += ` (${seniorData.community_service_other_text})`;
+                                }
+                                serviceContainer.appendChild(serviceElement);
+                            });
+                        } else {
+                            serviceContainer.innerHTML = '<p>No community service recorded</p>';
+                        }
+                        
+                        // Show the view modal
+                        $('#viewModal').modal('show');
+                        
+                    } catch (e) {
+                        console.error('Error parsing senior data:', e);
+                    }
+                }
+                
+                // Handle edit button clicks
+                if (e.target.closest('.edit-btn')) {
+                    console.log('Edit button clicked!'); // Debug log
+                    const button = e.target.closest('.edit-btn');
+                    try {
+                        const seniorData = JSON.parse(button.getAttribute('data-senior'));
+                        console.log('Edit Senior Data:', seniorData);
+                        
+                        // Store the resident ID
+                        document.getElementById('editResidentId').value = seniorData._id;
+                        
+                        // Populate Personal Information
+                        const name = seniorData.identifying_information?.name || {};
+                        document.getElementById('editFirstName').value = name.first_name || '';
+                        document.getElementById('editMiddleName').value = name.middle_name || '';
+                        document.getElementById('editLastName').value = name.last_name || '';
+                        
+                        // Populate Address Information
+                        const address = seniorData.identifying_information?.address || {};
+                        document.getElementById('editBarangay').value = address.barangay || '';
+                        
+                        // Trigger barangay change to populate purok options
+                        const barangaySelect = document.getElementById('editBarangay');
+                        if (address.barangay) {
+                            updateEditPurokOptions(address.barangay, address.purok);
+                        }
+                        
+                        // Populate other personal information
+                        document.getElementById('editGender').value = seniorData.identifying_information?.gender || '';
+                        
+                        // Handle date formatting for birthday
+                        const dob = seniorData.identifying_information?.date_of_birth;
+                        if (dob) {
+                            const date = new Date(dob);
+                            const formattedDate = date.toISOString().split('T')[0];
+                            document.getElementById('editBirthday').value = formattedDate;
+                        }
+                        
+                        document.getElementById('editAge').value = seniorData.identifying_information?.age || '';
+                        document.getElementById('editMaritalStatus').value = seniorData.identifying_information?.marital_status || '';
+                        
+                        // Handle place of birth (could be array or string)
+                        const placeOfBirth = seniorData.identifying_information?.place_of_birth;
+                        document.getElementById('editPlaceOfBirth').value = 
+                            Array.isArray(placeOfBirth) ? placeOfBirth.join(', ') : (placeOfBirth || '');
+                        
+                        // Handle spouse information
+                        const spouseGroup = document.getElementById('editSpouseGroup');
+                        const maritalStatus = seniorData.identifying_information?.marital_status;
+                        if (maritalStatus === 'Married') {
+                            spouseGroup.style.display = 'block';
+                            document.getElementById('editSpouseName').value = seniorData.family_composition?.spouse?.name || '';
+                        } else {
+                            spouseGroup.style.display = 'none';
+                        }
+                        
+                        // Populate ID Information
+                        const ids = seniorData.identifying_information || {};
+                        document.getElementById('editOscaId').value = ids.osca_id_number || '';
+                        document.getElementById('editGsisSss').value = ids.gsis_sss || '';
+                        document.getElementById('editPhilhealth').value = ids.philhealth || '';
+                        document.getElementById('editTin').value = ids.tin || '';
+                        
+                        // Populate Family Information
+                        const father = seniorData.family_composition?.father || {};
+                        const mother = seniorData.family_composition?.mother || {};
+                        const fatherName = `${father.first_name || ''} ${father.middle_name || ''} ${father.last_name || ''} ${father.extension || ''}`.trim();
+                        const motherName = `${mother.first_name || ''} ${mother.middle_name || ''} ${mother.last_name || ''}`.trim();
+                        
+                        document.getElementById('editFatherName').value = fatherName;
+                        document.getElementById('editMotherName').value = motherName;
+                        
+                        // Populate Contact Information
+                        populateEditContacts(seniorData.identifying_information?.contacts || []);
+                        
+                        // Show the edit modal
+                        console.log('About to show edit modal'); // Debug log
+                        
+                        // Try jQuery first, then fallback to vanilla JS
+                        if (typeof $ !== 'undefined' && $.fn.modal) {
+                            $('#editModal').modal('show');
+                            console.log('Edit modal show called via jQuery'); // Debug log
+                        } else {
+                            // Fallback to vanilla JS
+                            const modal = document.getElementById('editModal');
+                            if (modal) {
+                                modal.style.display = 'block';
+                                modal.classList.add('show');
+                                modal.setAttribute('aria-hidden', 'false');
+                                document.body.classList.add('modal-open');
+                                
+                                // Add backdrop
+                                const backdrop = document.createElement('div');
+                                backdrop.className = 'modal-backdrop fade show';
+                                backdrop.id = 'editModalBackdrop';
+                                document.body.appendChild(backdrop);
+                                
+                                console.log('Edit modal show called via vanilla JS'); // Debug log
+                            } else {
+                                console.error('Edit modal element not found!');
+                            }
+                        }
+                        
+                    } catch (e) {
+                        console.error('Error parsing senior data for edit:', e);
+                        alert('Error loading data for editing. Please try again.');
+                    }
+                }
+            });
+
+            // Function to update purok options in edit modal
+            function updateEditPurokOptions(selectedBarangay, selectedPurok = '') {
+                const purokSelect = document.getElementById('editPurok');
+                purokSelect.innerHTML = '<option value="">Select Purok</option>';
+                
+                if (selectedBarangay && barangaysData[selectedBarangay]) {
+                    barangaysData[selectedBarangay].forEach(purok => {
+                        const option = document.createElement('option');
+                        option.value = purok;
+                        option.textContent = purok;
+                        if (purok === selectedPurok) {
+                            option.selected = true;
+                        }
+                        purokSelect.appendChild(option);
+                    });
+                }
+            }
+
+            // Function to populate edit contacts
+            function populateEditContacts(contacts) {
+                const container = document.getElementById('editContactsContainer');
+                container.innerHTML = '';
+                
+                if (contacts.length === 0) {
+                    // Add one empty contact form if no contacts exist
+                    addEditContactForm(0, {});
+                } else {
+                    contacts.forEach((contact, index) => {
+                        addEditContactForm(index, contact);
+                    });
+                }
+            }
+
+            // Function to add contact form in edit modal
+            function addEditContactForm(index, contact = {}) {
+                const container = document.getElementById('editContactsContainer');
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact-form-group mb-3 p-3 border rounded';
+                contactDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Contact Type</label>
+                                <select class="form-control" name="contacts[${index}][type]">
+                                    <option value="primary" ${contact.type === 'primary' ? 'selected' : ''}>Primary</option>
+                                    <option value="secondary" ${contact.type === 'secondary' ? 'selected' : ''}>Secondary</option>
+                                    <option value="emergency" ${contact.type === 'emergency' ? 'selected' : ''}>Emergency</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" class="form-control" name="contacts[${index}][name]" value="${contact.name || ''}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Relationship</label>
+                                <input type="text" class="form-control" name="contacts[${index}][relationship]" value="${contact.relationship || ''}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" class="form-control" name="contacts[${index}][phone]" value="${contact.phone || ''}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" name="contacts[${index}][email]" value="${contact.email || ''}">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger remove-contact">Remove Contact</button>
+                `;
+                container.appendChild(contactDiv);
+                
+                // Add remove contact handler
+                contactDiv.querySelector('.remove-contact').addEventListener('click', function() {
+                    contactDiv.remove();
+                });
+            }
+
+            // Add contact button handler for edit modal
+            document.getElementById('addEditContact').addEventListener('click', function() {
+                const container = document.getElementById('editContactsContainer');
+                const index = container.children.length;
+                addEditContactForm(index);
+            });
+
+            // Edit barangay change handler
+            document.getElementById('editBarangay').addEventListener('change', function() {
+                const selectedBarangay = this.value;
+                updateEditPurokOptions(selectedBarangay);
+            });
+
+            // Edit marital status change handler
+            document.getElementById('editMaritalStatus').addEventListener('change', function() {
+                const spouseGroup = document.getElementById('editSpouseGroup');
+                if (this.value === 'Married') {
+                    spouseGroup.style.display = 'block';
+                } else {
+                    spouseGroup.style.display = 'none';
+                }
+            });
+
+            // Edit birthday change handler for age calculation
+            document.getElementById('editBirthday').addEventListener('change', function() {
+                const birthday = new Date(this.value);
+                const today = new Date();
+                let age = today.getFullYear() - birthday.getFullYear();
+                const monthDiff = today.getMonth() - birthday.getMonth();
+                
+                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+                    age--;
+                }
+                
+                document.getElementById('editAge').value = age;
+            });
+
+            // Close modal handlers for vanilla JS fallback
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal') || e.target.classList.contains('close') || e.target.getAttribute('data-dismiss') === 'modal') {
+                    const modal = document.getElementById('editModal');
+                    if (modal && modal.classList.contains('show')) {
+                        modal.style.display = 'none';
+                        modal.classList.remove('show');
+                        modal.setAttribute('aria-hidden', 'true');
+                        document.body.classList.remove('modal-open');
+                        
+                        // Remove backdrop
+                        const backdrop = document.getElementById('editModalBackdrop');
+                        if (backdrop) {
+                            backdrop.remove();
+                        }
+                    }
+                }
+            });
+
+            // Update button handler
+            document.getElementById('updateBtn').addEventListener('click', function() {
+                const form = document.getElementById('editResidentForm');
+                const formData = new FormData(form);
+                
+                // Convert FormData to JSON
+                const jsonData = {};
+                for (let [key, value] of formData.entries()) {
+                    if (key.includes('contacts[')) {
+                        // Handle contacts array
+                        if (!jsonData.contacts) jsonData.contacts = {};
+                        
+                        const match = key.match(/contacts\[(\d+)\]\[(\w+)\]/);
+                        if (match) {
+                            const index = match[1];
+                            const field = match[2];
+                            if (!jsonData.contacts[index]) jsonData.contacts[index] = {};
+                            jsonData.contacts[index][field] = value;
+                        }
+                    } else {
+                        jsonData[key] = value;
+                    }
+                }
+                
+                // Convert contacts object to array
+                if (jsonData.contacts) {
+                    jsonData.contacts = Object.values(jsonData.contacts);
+                }
+                
+                console.log('Update data:', jsonData);
+                
+                // Send update request
+                fetch('/update-senior', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(jsonData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Senior citizen information updated successfully!');
+                        $('#editModal').modal('hide');
+                        // Reload the page to show updated data
+                        window.location.reload();
+                    } else {
+                        alert('Error updating information: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating information. Please try again.');
+                });
+            });
+
+            // Initialize DataTable
+            var table = $('#example').DataTable({
+                paging: true,
+                pageLength: 10,
+                lengthMenu: [5, 10, 25, 50, 100],
+                responsive: true,
+                columnDefs: [
+                    {
+                        targets: 0, // First column (checkbox column)
+                        searchable: false,
+                        orderable: false
+                    }
+                ],
+                order: [[1, 'asc']], // Sort by second column (Full Name) by default
+                rowCallback: function(row) {
+                    if ($(row).hasClass('dt-empty')) {
+                        $(row).hide();
+                    }
+                }
+            });
+
+            // Search input functionality
+            $('#seniorSearchInput').on('keyup', function() {
+                table.search(this.value).draw();
+            });
+
+            // Clear search button
+            $('#clearSearchBtn').on('click', function() {
+                $('#seniorSearchInput').val('');
+                table.search('').draw();
+            });
+
+            // Combine with existing filters
+            $('#barangay-filter, #purok-filter').on('change', function() {
+                table.draw();
+            });
+
+            // Custom filtering function
+            $.fn.dataTable.ext.search.push(
+                function(settings, data, dataIndex) {
+                    var barangay = $('#barangay-filter').val();
+                    var purok = $('#purok-filter').val();
+                    
+                    // If no barangay is selected, show all
+                    if (!barangay) return true;
+                    
+                    var rowBarangay = data[3]; // Barangay is in the 4th column (index 3) after checkbox
+                    var rowPurok = data[4]; // Purok is in the 5th column (index 4) after checkbox
+                    
+                    // Filter by barangay
+                    if (barangay && rowBarangay !== barangay) return false;
+                    
+                    // Filter by purok if selected and not "all"
+                    if (purok && purok !== 'all' && rowPurok !== purok) return false;
+                    
+                    return true;
+                }
+            );
+        });
+    </script>
+
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="\bower_components\jquery\js\jquery.min.js"></script>
+    <script type="text/javascript" src="\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
+    <script type="text/javascript" src="\bower_components\popper.js\js\popper.min.js"></script>
+    <script type="text/javascript" src="\bower_components\bootstrap\js\bootstrap.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Other scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script type="text/javascript" src="\bower_components\jquery-slimscroll\js\jquery.slimscroll.js"></script>
+    <script type="text/javascript" src="\bower_components\modernizr\js\modernizr.js"></script>
+    <script type="text/javascript" src="\bower_components\modernizr\js\css-scrollbars.js"></script>
+    <script type="text/javascript" src="\bower_components\chart.js\js\Chart.js"></script>
+    <script src="\assets\pages\widget\amchart\amcharts.js"></script>
+    <script src="\assets\pages\widget\amchart\serial.js"></script>
+    <script src="\assets\pages\widget\amchart\light.js"></script>
+    <script type="text/javascript" src="\assets\js\SmoothScroll.js"></script>
+    <script src="\assets\js\pcoded.min.js"></script>
+    <script src="\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="\assets\js\vartical-layout.min.js"></script>
+    <script type="text/javascript" src="\assets\pages\dashboard\analytic-dashboard.min.js"></script>
+    <script type="text/javascript" src="\assets\js\script.js"></script>
+    <script type="text/javascript" src="\assets\js\senior.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'UA-23581568-13');
+    </script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-color: whitesmoke;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: whitesmoke;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  h1 {
+    text-align: center;
+    color: solid black;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    width: 100%;
+  }
+  
+  fieldset {
+    border: none;
+    padding: 20px;
+    display: none;
+  }
+  
+  fieldset.active {
+    display: block;
+  }
+  
+  legend {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    flex: 1;
+    margin-right: 10px;
+  }
+  
+  .form-group:last-child {
+    margin-right: 0;
+  }
+  
+  label {
+    display: block;
+    font-size: 14px;
+    color: #ae0c00;
+    margin-bottom: 5px;
+  }
+  
+  input,
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+  }
+  
+  input:focus,
+  select:focus {
+    border-color: #007bff;
+    background-color: #fff;
+  }
+  
+  .navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .navigation button {
+    padding: 12px 24px;
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  #prevBtn {
+    background-color: whitesmoke;
+    color: red;
+  }
+  
+  #nextBtn {
+    background-color: whitesmoke;
+    color: red;
+  }
+  
+  .navigation button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  #prevBtn:hover {
+    background-color: white;
+  }
+  
+  #nextBtn:hover {
+    background-color: white;
+  }
+  
+  .navigation button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .navigation button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+  }
+  
+  @media (max-width: 600px) {
+    .navigation {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .navigation button {
+      margin-bottom: 10px;
+    }
+  }
+  
+  .progress-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    position: relative;
+  }
+  
+  .progress-bar::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #ae0c00;
+    transform: translateY(-50%);
+    z-index: 0;
+  }
+  
+  .step {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #ae0c00;
+    cursor: pointer;
+  }
+  
+  .step.active {
+    font-weight: bold;
+    color: #ae0c00;
+    background-color: whitesmoke;
+  }
+  
+  .step::before {
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #ae0c00;
+    margin: 0 auto 8px;
+  }
+  
+  .step.active::before {
+    background-color: white;
+  }
+  
+  .form-group.full-width {
+    flex: 0 0 100%;
+  }
+  
+  .file-group {
+    position: relative;
+  }
+  
+  .file-input {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+  }
+  
+  .file-label {
+    padding: 15px;
+    background-color: whitesmoke;
+    color: red;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .file-label:hover {
+    background-color: #0056b3;
+  }
+  
+  .checkmark {
+    display: none;
+    color: red;
+    font-size: 20px;
+    margin-left: 10px;
+  }
+  
+  .file-group.checked .checkmark {
+    display: inline;
+  }
+  
+  /* General button styles */
+  button {
+    background-color: gray; /* Green background */
+    border: none;
+    color: white; /* White text */
+    padding: 10px 20px; /* Some padding */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
+    margin: 1px 20px 20px;
+    cursor: pointer;
+    border-radius: 40px; /* Rounded corners */
+    transition: background-color 0.5s, transform 0.5s;
+  }
+  
+  button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  button:active {
+    transform: scale(0.98); /* Slightly shrink button on click */
+  }
+  
+  /* Language switch button styles */
+  #languageSwitchBtn {
+    background-color: white; /* Blue background */
+    color: black;
+    font-weight: bold;
+  }
+  
+  #languageSwitchBtn:hover {
+    background-color: #ae0c00; /* Darker blue on hover */
+  }
+  
+  /* CSS for transforming labels and placeholders to uppercase */
+  
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select {
+    text-transform: capitalize;
+  }
+  
+  input::placeholder {
+    text-transform: capitalize;
+  }
+  

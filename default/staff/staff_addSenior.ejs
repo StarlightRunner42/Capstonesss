@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="\assets\css\fill.css">
+		<title>OSCA FORM</title>
+	
+	</head>
+	<body>
+        
+		<div class="container">
+			<h1 id="formTitle">OSCA FORM</h1>
+			<form id="housingForm" action="/add-data" method="post">
+				<div class="progress-bar">
+					<div class="step active"">
+					<span id=" step1">Personal Information</span>
+					</div>
+					<div class="step">
+						<span id="step2">Contact Information</span>
+					</div>
+					<div class="step">
+						<span id="step3">Family Composition</span>
+					</div>
+					<div class="step">
+						<span id="step4">ID'S</span>
+					</div>
+					<div class="step">
+						<span id="step5">Education / HR Profile</span>
+					</div>
+					<div class="step">
+						<span id="step5">Community Service</span>
+					</div>
+				</div>
+
+				<!-- Personal Information -->
+				<fieldset id="personalInfo" class="active">
+					<legend id="personalInfoLegend">Personal Information</legend>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="first_name" id="firstNameLabel">First Name</label>
+							<input type="text" id="first_name" name="first_name" required placeholder="First Name">
+						</div>
+						<div class="form-group">
+							<label for="middle_name" id="middleNameLabel">Middle Name</label>
+							<input type="text" id="middle_name" name="middle_name" placeholder="Middle Name">
+						</div>
+						<div class="form-group">
+							<label for="last_name" id="lastNameLabel">Last Name</label>
+							<input type="text" id="last_name" name="last_name" required placeholder="Last Name">
+						</div>
+					</div>
+					<div class="form-row">
+
+						<div class="form-group">
+						<label for="barangay" id="barangayLabel">Barangay:</label>
+						<select id="barangay" name="barangay" required onchange="updatePurokOptions()">
+							<option value="" disabled selected>Select Barangay</option>
+							<% Object.keys(barangays).forEach(barangay => { %>
+							<option value="<%= barangay %>"><%= barangay %></option>
+							<% }) %>
+						</select>
+						</div>
+
+						<div class="form-group">
+						<label for="purok" id="purokLabel">Purok:</label>
+						<select id="purok" name="purok" required>
+							<option value="" disabled selected>Select Purok</option>
+						</select>
+						</div>
+
+						<div class="form-group">
+							<label for="gender">Gender</label>
+							<select id="gender" name="gender" required>
+								<option value="">-- Select One --</option>
+								<option value="Male">Male</option>
+								<option value="Female">Female</option>
+								<option value="Other">Other</option>
+								<option value="Prefer not to say">Prefer not to say</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="birthday" id="birthdayLabel">Birthday</label>
+							<input type="date" id="birthday" name="birthday" required onchange="calculateAge()">
+						</div>
+						<div class="form-group">
+							<label for="age" id="ageLabel">Age</label>
+							<input type="number" id="age" name="age" required placeholder="Age" readonly>
+						</div>
+						<div class="form-group">
+							<label for="place_of_birth" id="placeOfBirthLabel">Religion</label>
+							<input type="text" id="place_of_birth" name="place_of_birth" required placeholder="Religion">
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="pension" id="pension">Current Pension (specify)</label>
+							<input type="number" id="pension" name="pension" required placeholder="100,000">
+						</div>
+						<div class="form-group">
+							<label for="service" id="service">Service/Business/Employment(specify)</label>
+							<input type="text" id="service" name="service" required placeholder="Service">
+						</div>
+						<div class="form-group">
+							<label for="education_level">Capability to Travel</label>
+							<select id="education_level" name="education_level" required>
+								<option value="">-- Select One --</option>
+								<option value="Yes">Yes</option>
+								<option value="No">No</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="place_of_birth" id="placeOfBirthLabel">Place of Birth</label>
+							<input type="text" id="place_of_birth" name="place_of_birth" required placeholder="Place of Birth">
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="civil_status" id="civilStatusLabel">Civil Status</label>
+							<select id="civil_status" name="civil_status" required onchange="toggleSpouseInput()">
+								<option value="Single but Head of the Family">Single but Head of the Family</option>
+								<option value="Single">Single</option>
+								<option value="Married">Married</option>
+							</select>
+						</div>
+						<div class="form-group" id="spouseGroup" style="display: none;">
+							<label for="spouse_name" id="spouseNameLabel">Name of Spouse</label>
+							<input type="text" id="spouse_name" name="spouse_name" placeholder="Name of Spouse">
+						</div>
+						
+						</div>
+				</fieldset>
+                
+				<fieldset id="contactInformation">
+                    <legend>CONTACT INFORMATION</legend>
+                    
+                    <!-- Contacts Container -->
+                    <div id="contactsContainer">
+                        <!-- Default Contact (can't be removed) -->
+                        <div class="contact-entry" data-contact-id="1">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Contact Type</label>
+                                    <select class="contact-type" name="contacts[1][type]" required>
+                                        <option value="primary">Primary</option>
+                                        <option value="secondary">Secondary</option>
+                                        <option value="emergency">Emergency</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" name="contacts[1][name]" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Relationship</label>
+                                    <input type="text" name="contacts[1][relationship]" required>
+                                </div>
+                               <div class="form-group">
+    <label>Phone Number</label>
+    <input type="tel" name="contacts[1][phone]" maxlength="11" pattern="\d{11}" title="Please enter exactly 11 digits" required>
+</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" name="contacts[1][email]">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="delete-child" disabled>Remove</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Add Contact Button -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <button type="button" id="addContact" class="add-child-btn">+ Add Another Contact</button>
+                        </div>
+                    </div>
+                </fieldset>
+                
+
+
+				<fieldset id="familyComposition">
+					<legend>Family Composition</legend>
+					<!-- Father's Name -->
+					<div class="form-row">
+						<div class="form-group">
+							<label for="fatherLastName">Father's Last Name</label>
+							<input type="text" id="fatherLastName" name="fatherLastName" placeholder="Last Name">
+						</div>
+						<div class="form-group">
+							<label for="fatherFirstName">Father's First Name</label>
+							<input type="text" id="fatherFirstName" name="fatherFirstName" placeholder="First Name">
+						</div>
+						<div class="form-group">
+							<label for="fatherMiddleName">Father's Middle Name</label>
+							<input type="text" id="fatherMiddleName" name="fatherMiddleName" placeholder="Middle Name">
+						</div>
+						<div class="form-group">
+							<label for="fatherExtension">Extension (Jr/Sr)</label>
+							<input type="text" id="fatherExtension" name="fatherExtension" placeholder="Extension (Jr, Sr)">
+						</div>
+					</div>
+					<!-- Mother's Maiden Name -->
+					<div class="form-row">
+						<div class="form-group">
+							<label for="motherLastName">Mother's Last Name</label>
+							<input type="text" id="motherLastName" name="motherLastName" placeholder="Last Name">
+						</div>
+						<div class="form-group">
+							<label for="motherFirstName">Mother's First Name</label>
+							<input type="text" id="motherFirstName" name="motherFirstName" placeholder="First Name">
+						</div>
+						<div class="form-group">
+							<label for="motherMiddleName">Mother's Middle Name</label>
+							<input type="text" id="motherMiddleName" name="motherMiddleName" placeholder="Middle Name">
+						</div>
+					</div>
+					<!-- Children Information -->
+					<div class="form-row">
+						<legend>Child(ren) Information</legend>
+						<div id="childrenContainer">
+							<div class="child-entry">
+								<div class="form-row">
+									<div class="form-group">
+										<label>Full Name</label>
+										<input type="text" name="childFullName[]" placeholder="Full Name">
+									</div>
+									<div class="form-group">
+										<label>Occupation</label>
+										<input type="text" name="childOccupation[]" placeholder="Occupation">
+									</div>
+									<div class="form-group">
+										<label>Age</label>
+										<input type="number" name="childAge[]" placeholder="Age">
+									</div>
+									<div class="form-group">
+										<label>Working/Not Working</label>
+										<select name="childWorkingStatus[]">
+											<option value="not_working">Select</option>
+											<option value="not_working">Not Working</option>
+											<option value="working">Working</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label>Income</label>
+										<input type="number" name="childIncome[]" placeholder="Income">
+									</div>
+									<button type="button" class="delete-child" style="display: none;">Delete</button>
+								</div>
+							</div>
+						</div>
+						<button type="button" id="addChild" class="add-child-btn">➕ Add Another Child</button>
+					</div>
+				</fieldset>
+				
+				<!-- ID'S -->
+				<fieldset id="requiredDocuments" class="hidden">
+					<legend id="requiredDocumentsLegend">ID'S</legend>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="osca_id" id="oscaIdLabel">OSCA ID No</label>
+							<input type="number" id="osca_id" name="osca_id" required>
+						</div>
+						<div class="form-group">
+							<label for="gsis_sss_no" id="gsisSssLabel">GSIS/SSS No</label>
+							<input type="number" id="gsis_sss_no" name="gsis_sss_no" required>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="tin_no" id="tinNoLabel">TIN No</label>
+							<input type="number" id="tin_no" name="tin_no" required>
+						</div>
+						<div class="form-group">
+							<label for="philhealth_no" id="philhealthLabel">Philhealth No</label>
+							<input type="number" id="philhealth_no" name="philhealth_no" required>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="sc_association_id" id="scAssociationLabel">SC Association / Org ID No</label>
+							<input type="number" id="sc_association_id" name="sc_association_id" required>
+						</div>
+						<div class="form-group">
+							<label for="other_govt_id" id="otherGovtLabel">Other Gov't ID</label>
+							<input type="number" id="other_govt_id" name="other_govt_id" required>
+						</div>
+					</div>
+				</fieldset>
+
+				<fieldset id="educationalAttainment">
+					<legend>Educational Attainment</legend>
+					<div class="form-group">
+						<label for="education_level">Select Educational Level:</label>
+						<select id="education_level" name="education_level" required>
+							<option value="">-- Select One --</option>
+							<option value="Elementary Level">Elementary Level</option>
+							<option value="Elementary Graduate">Elementary Graduate</option>
+							<option value="High School Graduate">High School Graduate</option>
+							<option value="College Level">College Level</option>
+							<option value="College Graduate">College Graduate</option>
+							<option value="Post Graduate">Post Graduate</option>
+							<option value="Vocational">Vocational</option>
+							<option value="Not Attended School">Not Attended School</option>
+						</select>
+					</div>
+
+					<div class="form-section skills-section">
+						<h3 class="section-title">Areas of Specialization / Technical Skills</h3>
+						<p class="section-subtitle">Check all applicable</p>
+						
+						<div class="skills-grid">
+						  <div class="skills-column">
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-medical" name="skills[]" value="Medical">
+							  <label for="skill-medical">Medical</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-dental" name="skills[]" value="Dental">
+							  <label for="skill-dental">Dental</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-fishing" name="skills[]" value="Fishing">
+							  <label for="skill-fishing">Fishing</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-engineering" name="skills[]" value="Engineering">
+							  <label for="skill-engineering">Engineering</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-barber" name="skills[]" value="Barber">
+							  <label for="skill-barber">Barber</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-evangelization" name="skills[]" value="Evangelization">
+							  <label for="skill-evangelization">Evangelization</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-millwright" name="skills[]" value="Millwright">
+							  <label for="skill-millwright">Millwright</label>
+							</div>
+						  </div>
+						  
+						  <div class="skills-column">
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-teaching" name="skills[]" value="Teaching">
+							  <label for="skill-teaching">Teaching</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-counseling" name="skills[]" value="Counseling">
+							  <label for="skill-counseling">Counseling</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-cooking" name="skills[]" value="Cooking">
+							  <label for="skill-cooking">Cooking</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-carpenter" name="skills[]" value="Carpenter">
+							  <label for="skill-carpenter">Carpenter</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-mason" name="skills[]" value="Mason">
+							  <label for="skill-mason">Mason</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-tailor" name="skills[]" value="Tailor">
+							  <label for="skill-tailor">Tailor</label>
+							</div>
+						  </div>
+						  
+						  <div class="skills-column">
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-legal" name="skills[]" value="Legal Services">
+							  <label for="skill-legal">Legal Services</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-farming" name="skills[]" value="Farming">
+							  <label for="skill-farming">Farming</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-arts" name="skills[]" value="Arts">
+							  <label for="skill-arts">Arts</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-plumber" name="skills[]" value="Plumber">
+							  <label for="skill-plumber">Plumber</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-sapatero" name="skills[]" value="Sapatero">
+							  <label for="skill-sapatero">Sapatero</label>
+							</div>
+							<div class="skill-item">
+							  <input type="checkbox" id="skill-chef" name="skills[]" value="Chef/Cook">
+							  <label for="skill-chef">Chef/Cook</label>
+							</div>
+						  </div>
+						</div>
+						
+						<div class="skill-item other-skill">
+						  <input type="checkbox" id="skill-other" name="skills[]" value="Other">
+						  <label for="skill-other">Others, specify:</label>
+						  <input type="text" id="skill-other-text" name="skill_other_text" class="other-input">
+						</div>
+					  </div>
+
+				</fieldset>
+
+				<fieldset id="service">
+  <div class="form-section skills-section">
+    <h3 class="section-title">Community Service and Involvement (Check all applicable)</h3>
+    
+    <div class="skills-grid">
+      <div class="skills-column">
+        <div class="skill-item">
+          <input type="checkbox" id="skill-medical" name="skills[]" value="Medical">
+          <label for="skill-medical">Medical</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-community-leader" name="skills[]" value="Community / Organization Leader">
+          <label for="skill-community-leader">Community / Organization Leader</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-neighborhood" name="skills[]" value="Neighborhood Support Services">
+          <label for="skill-neighborhood">Neighborhood Support Services</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-counseling" name="skills[]" value="Counseling / Referral">
+          <label for="skill-counseling">Counseling / Referral</label>
+        </div>
+      </div>
+      
+      <div class="skills-column">
+        <div class="skill-item">
+          <input type="checkbox" id="skill-resource" name="skills[]" value="Resource Volunteer">
+          <label for="skill-resource">Resource Volunteer</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-dental" name="skills[]" value="Dental">
+          <label for="skill-dental">Dental</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-legal" name="skills[]" value="Legal Services">
+          <label for="skill-legal">Legal Services</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-sponsorship" name="skills[]" value="Sponsorship">
+          <label for="skill-sponsorship">Sponsorship</label>
+        </div>
+      </div>
+      
+      <div class="skills-column">
+        <div class="skill-item">
+          <input type="checkbox" id="skill-beautification" name="skills[]" value="Community Beautification">
+          <label for="skill-beautification">Community Beautification</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-visits" name="skills[]" value="Friendly Visits">
+          <label for="skill-visits">Friendly Visits</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="skill-religious" name="skills[]" value="Religious">
+          <label for="skill-religious">Religious</label>
+        </div>
+      </div>
+    </div>
+						
+						<div class="skill-item">
+						  <input type="checkbox" id="skill-other" name="skills[]" value="Other">
+						  <label for="skill-other">Others, specify:</label>
+						  <input type="text" id="skill-other-text" name="skill_other_text" class="other-input">
+						</div>
+					  </div>
+				</fieldset>
+
+				
+				<div class="navigation">
+					<button type="button" id="prevBtn" onclick="nextPrev(-1)">BACK</button>
+					<button type="button" id="nextBtn" onclick="nextPrev(1)">NEXT</button>
+				</div>
+			</form>
+
+							<script>
+				// Embed the puroks data from backend into JavaScript
+				const puroks = <%- JSON.stringify(barangays) %>;
+
+				function updatePurokOptions() {
+					const barangay = document.getElementById('barangay').value;
+					const purokSelect = document.getElementById('purok');
+
+					purokSelect.innerHTML = '<option value="" disabled selected>Select Purok</option>';
+
+					if (puroks[barangay]) {
+					puroks[barangay].forEach(purok => {
+						const option = document.createElement('option');
+						option.value = purok;
+						option.textContent = purok;
+						purokSelect.appendChild(option);
+					});
+					}
+				}
+				</script>
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+			<script type="text/javascript" src="\assets\js\fill.js"></script>
+	</body>
+</html>

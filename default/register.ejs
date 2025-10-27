@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silay Housing Authority - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="\assets\css\register.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="register-container">
+            <div class="register-image">
+                <img src="http://www.cameleon-association.org/wp-content/uploads/2018/12/Ph_seal_negros_occidental_silay.png" alt="Logo" class="logo">
+                <h2>Welcome to</h2>  
+                <h1 class="mb-4">Silay Inclusive Living</h1>  
+                <p>Committed to providing safe, accessible, and comfortable housing for PWDs and seniors in our community.</p>
+            </div>
+            <div class="register-form">
+                <h3 class="text-center mb-4">Create Your Account</h3>
+                
+                <div class="role-selector">
+                    <div class="role-option" data-role="Staff">Staff</div>
+                    <div class="role-option" data-role="Admin">Admin</div>
+                    <div class="role-option" data-role="Super Admin">Super Admin</div>
+                    <div class="role-option" data-role="Youth">Youth</div>
+                </div>
+                
+                <form method="POST" action="/create-user" id="registerForm">
+                    <input type="hidden" name="role" id="selected-role" value="user">
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" placeholder="Email Address" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                        <div class="password-strength"></div>
+                        <div class="requirements">
+                            <div class="requirement"><i class="fas fa-circle"></i> At least 8 characters</div>
+                            <div class="requirement"><i class="fas fa-circle"></i> Contains uppercase & lowercase</div>
+                            <div class="requirement"><i class="fas fa-circle"></i> Contains numbers</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="confirm_password" placeholder="Confirm Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <button type="submit" class="btn btn-register btn-block">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="\assets\js\register.js"></script>
+
+</body>
+</html>

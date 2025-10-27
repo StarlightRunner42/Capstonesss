@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" type="text/css" href="\assets\css\fill.css">
+		<title>Silay Housing Authority Office Information Form</title>
+	</head>
+	<body>
+		<div class="container">
+			<h1 id="formTitle">LYDO FORM</h1>
+
+			<form id="housingForm" action="/create-youth" method="post">
+				<div class="progress-bar">
+					<div class="step active">
+						<span id="step1">Personal Information</span>
+					</div>
+					<div class="step ">
+						<span id="step2">Demoghraphic characteristic</span>
+					</div>
+				</div>
+				<!-- Personal Information -->
+				<fieldset id="personalInfo" class="active">
+					<legend id="personalInfoLegend">Personal Information</legend>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="first_name" id="firstNameLabel">First Name</label>
+							<input type="text" id="first_name" name="first_name" required placeholder="First Name" maxlength="25">
+						</div>
+						<div class="form-group">
+							<label for="middle_name" id="middleNameLabel">Middle Name</label>
+							<input type="text" id="middle_name" name="middle_name" placeholder="Middle Name" maxlength="25">
+						</div>
+						<div class="form-group">
+							<label for="last_name" id="lastNameLabel">Last Name</label>
+							<input type="text" id="last_name" name="last_name" required placeholder="Last Name" maxlength="25">
+						</div>
+					</div>
+
+					<div class="form-row">
+
+						<div class="form-group">
+						<label for="barangay" id="barangayLabel">Barangay:</label>
+						<select id="barangay" name="barangay" required onchange="updatePurokOptions()">
+							<option value="" disabled selected>Select Barangay</option>
+							<% Object.keys(barangays).forEach(barangay => { %>
+							<option value="<%= barangay %>"><%= barangay %></option>
+							<% }) %>
+						</select>
+						</div>
+
+						<div class="form-group">
+						<label for="purok" id="purokLabel">Purok:</label>
+						<select id="purok" name="purok" required>
+							<option value="" disabled selected>Select Purok</option>
+						</select>
+						</div>
+
+						<div class="form-group">
+							<label for="contact" id="contactLabel">Contact</label>
+							<input type="tel" id="contact" name="contact" required placeholder="" pattern="[0-9]{11}" maxlength="11" title="Please enter exactly 11 digits (numbers only)" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+						</div>
+					</div>
+
+					<div class="form-row">
+						<div class="form-group">
+							<label for="birthday" id="birthdayLabel">Birthday</label>
+							<input type="date" id="birthday" name="birthday" required onchange="calculateAge()">
+						</div>
+						<div class="form-group">
+							<label for="age" id="ageLabel">Age</label>
+							<input type="number" id="age" name="age" required placeholder="Age" readonly>
+						</div>
+						<div class="form-group">
+							<label for="gender">Gender</label>
+							<select id="gender" name="gender" required>
+								<option value="">-- Select One --</option>
+								<option value="Male">Male</option>
+								<option value="Female">Female</option>
+								<option value="Other">Other</option>
+								<option value="Prefer not to say">Prefer not to say</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group">
+							<label for="place_of_birth" id="placeOfBirthLabel">Place of Birth</label>
+							<input type="text" id="place_of_birth" name="place_of_birth" required placeholder="Place of Birth">
+						</div>
+					</div>
+				</fieldset>
+
+				<fieldset id="disability">
+					<legend>Educational Attainment</legend>
+					<div class="form-row">
+					<div class="form-group">
+						<label for="education_level">Select Educational Level:</label>
+						<select id="education_level" name="education_level" required>
+							<option value="">-- Select One --</option>
+							<option value="Elementary Level">Elementary Level</option>
+							<option value="Elementary Graduate">Elementary Graduate</option>
+							<option value="High School Graduate">High School Graduate</option>
+							<option value="College Level">College Level</option>
+							<option value="College Graduate">College Graduate</option>
+							<option value="Post Graduate">Post Graduate</option>
+							<option value="Vocational">Vocational</option>
+							<option value="Not Attended School">Not Attended School</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="registered_sk">Registered SK Voters</label>
+						<select id="registered_sk" name="registered_sk" required>
+							<option value="">-- Select One --</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label for="voted_sk">Voted last SK election?</label>
+						<select id="voted_sk" name="voted_sk" required>
+							<option value="">-- Select One --</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						<label for="registered_national">Registered National Voters</label>
+						<select id="registered_national" name="registered_national" required>
+							<option value="">-- Select One --</option>
+							<option value="Yes">Yes</option>
+							<option value="No">No</option>
+						</select>
+					</div>
+					
+					
+				</div>
+
+					<div class="form-row">
+  <div class="form-group">
+    <label for="employment_status">Status of Employment:</label>
+    <select id="employment_status" name="employment_status" required>
+      <option value="">-- Select One --</option>
+      <option value="Employee">Employee</option>
+      <option value="Unemployed">Unemployed</option>
+      <option value="Self-employed">Self-employed</option>
+    </select>
+  </div>
+  <div class="form-group" id="categoryGroup" style="display: none;">
+    <label for="employment_category">Category of Employment:</label>
+    <select id="employment_category" name="employment_category">
+      <option value="">-- Select One --</option>
+      <option value="Government">Government</option>
+      <option value="Private">Private</option>
+    </select>
+  </div>
+  <div class="form-group" id="typeGroup" style="display: none;">
+    <label for="employment_type">Type of Employment:</label>
+    <select id="employment_type" name="employment_type">
+      <option value="">-- Select One --</option>
+      <option value="Permanent/Regular">Permanent/Regular</option>
+      <option value="Seasonal">Seasonal</option>
+      <option value="Casual">Casual</option>
+      <option value="Emergency">Emergency</option>
+    </select>
+  </div> 
+
+  <div class="form-group">
+    <label for="Assembly">Attended a KK Assembly before?</label>
+    <select id="Assembly" name="Assembly" required onchange="toggleSkFields()">
+      <option value="">-- Select One --</option>
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
+    </select>
+  </div>
+  
+  <!-- Fields to show when "Yes" is selected -->
+	<div id="sk-yes-fields" style="display: none;">
+		<div class="form-group">
+		<label for="sk-times">If Yes, How many times?</label>
+		<select id="sk-times" name="sk-times" class="form-control">
+			<option value="">-- Select an option --</option>
+			<option value="1-2">1–2 Times</option>
+			<option value="3-4">3–4 Times</option>
+			<option value="5+">5 and above</option>
+		</select>
+		</div>
+	</div>
+  
+  <!-- Fields to show when "No" is selected -->
+  <div id="sk-no-fields" style="display: none;">
+	<div class="form-group">
+	  <label for="reason">If No, Why?</label>
+	  <select id="reason" name="reason" class="form-control">
+		<option value="">-- Select an option --</option>
+		<option value="No KK Assembly Meeting">There was no KK Assembly Meeting</option>
+		<option value="Not interested to attend">Not interested to Attend</option>
+	  </select>
+	</div>
+  </div> 
+</div>
+
+
+					<div class="form-section skills-section">
+  <h3 class="section-title">Youth Classification</h3>
+  <div class="skills-grid">
+    <div class="skills-column">
+      <div class="skill-item">
+        <input type="checkbox" id="youth-in-school" name="youth_classification[]" value="In School Youth">
+        <label for="youth-in-school">In School Youth</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="youth-out-school" name="youth_classification[]" value="Out of School Youth">
+        <label for="youth-out-school">Out of School Youth</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="youth-specific-needs" name="youth_classification[]" value="Youth w/Specific Needs">
+        <label for="youth-specific-needs">Youth w/Specific Needs</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="youth-other" name="youth_classification[]" value="Other">
+        <label for="youth-other">Others, specify:</label>
+        <input type="text" id="youth-other-text" name="youth_other_text" class="other-input">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-section skills-section">
+  <h3 class="section-title">Youth Age Group <span class="required">*</span></h3>
+  <div class="skills-grid">
+    <div class="skills-column">
+      <div class="skill-item">
+        <input type="checkbox" id="age-child" name="youth_age_group[]" value="Child Youth (15−17 yrs old)">
+        <label for="age-child">Child Youth (15−17 yrs old)</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="age-core" name="youth_age_group[]" value="Core Youth (18−24 yrs old)">
+        <label for="age-core">Core Youth (18−24 yrs old)</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="age-young-adult" name="youth_age_group[]" value="Young Adult (15−30 yrs old)">
+        <label for="age-young-adult">Young Adult (15−30 yrs old)</label>
+      </div>
+      <div class="skill-item">
+        <input type="checkbox" id="age-other" name="youth_age_group[]" value="Other">
+        <label for="age-other">Others, specify:</label>
+        <input type="text" id="age-other-text" name="age_other_text" class="other-input">
+      </div>
+    </div>
+  </div>
+</div>
+					
+				</fieldset>
+		
+			<div class="navigation">
+				<button type="button" id="prevBtn" onclick="nextPrev(-1)">BACK</button>
+				<button type="button" id="nextBtn" onclick="nextPrev(1)">NEXT</button>
+			</div>
+			</form>
+			
+				<script>
+				// Embed the puroks data from backend into JavaScript
+				const puroks = <%- JSON.stringify(barangays) %>;
+
+				function updatePurokOptions() {
+
+    const barangay = document.getElementById('barangay').value;
+    const purokSelect = document.getElementById('purok');
+
+    purokSelect.innerHTML = '<option value="" disabled selected>Select Purok</option>';
+
+    if (puroks[barangay]) {
+        puroks[barangay].forEach(purok => {
+            const option = document.createElement('option');
+            option.value = purok;
+            option.textContent = purok;
+            purokSelect.appendChild(option);
+        });
+    }
+}
+
+				</script>
+
+
+			<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+			<script type="text/javascript" src="\assets\js\youth.js"></script>
+				
+	</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "name": "capstone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joshua-code-design/Capstone.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Joshua-code-design/Capstone/issues"
+  },
+  "homepage": "https://github.com/Joshua-code-design/Capstone#readme",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
+    "capstone": "file:",
+    "datatables.net-dt": "^2.2.2",
+    "dotenv": "^16.4.7",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "jquery": "^3.7.1",
+    "mongoose": "^8.13.1",
+    "nodemon": "^3.1.9",
+    "path": "^0.12.7",
+    "routes": "^2.1.0",
+    "sweetalert2": "^11.17.2"
+  }
+}

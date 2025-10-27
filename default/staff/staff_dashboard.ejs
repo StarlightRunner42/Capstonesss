@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Silay Housing Authority </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="#">
+    <meta name="keywords" content="flat ui, admin Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="author" content="#">
+    <!-- Favicon icon -->
+    <link rel="icon" href="\assets\images\favicon.ico" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="\bower_components\bootstrap\css\bootstrap.min.css">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="\assets\icon\feather\css\feather.css">
+    <link rel="stylesheet" type="text/css" href="\assets\css\form.css">
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="\assets\css\style.css">
+    <link rel="stylesheet" type="text/css" href="/assets/css/jquery.mCustomScrollbar.css">
+   
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+
+                    <div class="navbar-logo">
+                        <a class="mobile-menu" id="mobile-collapse" href="#!">
+                            <i class="feather icon-menu"></i>
+                        </a>
+                       <a href="index-1.htm">
+    <span class="logo-text">SILAY CITY</span>
+</a>
+                        <a class="mobile-options">
+                            <i class="feather icon-more-horizontal"></i>
+                        </a>
+                    </div>
+
+                    <div class="navbar-container container-fluid">
+                        <ul class="nav-left">
+                            <li class="header-search">
+                                <div class="main-search morphsearch-search">
+                                    <div class="input-group">
+                                        <span class="input-group-addon search-close"><i class="feather icon-x"></i></span>
+                                        <input type="text" class="form-control">
+                                        <span class="input-group-addon search-btn"><i class="feather icon-search"></i></span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="#!" onclick="javascript:toggleFullScreen()">
+                                    <i class="feather icon-maximize full-screen"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul class="nav-right">
+                            <li class="header-notification">
+                                <div class="dropdown-primary dropdown">
+                                    <div class="dropdown-toggle" data-toggle="dropdown">
+                                        <i class="feather icon-bell"></i>
+                                        <span class="badge bg-c-pink">5</span>
+                                    </div>
+                                    <ul class="show-notification notification-view dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                        <li>
+                                            <h6>Notifications</h6>
+                                            <label class="label label-danger">New</label>
+                                        </li>
+                                        <li>
+                                            <div class="media">
+                                                <img class="d-flex align-self-center img-radius" src="\assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                                                <div class="media-body">
+                                                    <h5 class="notification-user">John Doe</h5>
+                                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                                    <span class="notification-time">30 minutes ago</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="media">
+                                                <img class="d-flex align-self-center img-radius" src="\assets\images\avatar-3.jpg" alt="Generic placeholder image">
+                                                <div class="media-body">
+                                                    <h5 class="notification-user">Joseph William</h5>
+                                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                                    <span class="notification-time">30 minutes ago</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="media">
+                                                <img class="d-flex align-self-center img-radius" src="\assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                                                <div class="media-body">
+                                                    <h5 class="notification-user">Sara Soudein</h5>
+                                                    <p class="notification-msg">Lorem ipsum dolor sit amet, consectetuer elit.</p>
+                                                    <span class="notification-time">30 minutes ago</span>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="header-notification">
+                                <div class="dropdown-primary dropdown">
+                                    <div class="displayChatbox dropdown-toggle" data-toggle="dropdown">
+                                        <i class="feather icon-message-square"></i>
+                                        <span class="badge bg-c-green">3</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="user-profile header-notification">
+                                <div class="dropdown-primary dropdown">
+                                    <div class="dropdown-toggle" data-toggle="dropdown">
+                                       
+                                        <i class="feather icon-chevron-down"></i>
+                                    </div>
+                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                        <li>
+                                            <a href="/logout">
+                                                <i class="feather icon-log-out"></i> Logout
+                                            </a>
+                                        </li>
+                                    </ul>
+
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Sidebar chat start -->
+            <div id="sidebar" class="users p-chat-user showChat">
+                <div class="had-container">
+                    <div class="card card_main p-fixed users-main">
+                        <div class="user-box">
+                            <div class="chat-inner-header">
+                                <div class="back_chatBox">
+                                    <div class="right-icon-control">
+                                        <input type="text" class="form-control  search-text" placeholder="Search Friend" id="search-friends">
+                                        <div class="form-icon">
+                                            <i class="icofont icofont-search"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="main-friend-list">
+                                <div class="media userlist-box" data-id="1" data-status="online" data-username="Josephin Doe" data-toggle="tooltip" data-placement="left" title="Josephin Doe">
+                                    <a class="media-left" href="#!">
+                                        <img class="media-object img-radius img-radius" src="\assets\images\avatar-3.jpg" alt="Generic placeholder image ">
+                                        <div class="live-status bg-success"></div>
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="f-13 chat-header">Josephin Doe</div>
+                                    </div>
+                                </div>
+                                <div class="media userlist-box" data-id="2" data-status="online" data-username="Lary Doe" data-toggle="tooltip" data-placement="left" title="Lary Doe">
+                                    <a class="media-left" href="#!">
+                                        <img class="media-object img-radius" src="\assets\images\avatar-2.jpg" alt="Generic placeholder image">
+                                        <div class="live-status bg-success"></div>
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="f-13 chat-header">Lary Doe</div>
+                                    </div>
+                                </div>
+                                <div class="media userlist-box" data-id="3" data-status="online" data-username="Alice" data-toggle="tooltip" data-placement="left" title="Alice">
+                                    <a class="media-left" href="#!">
+                                        <img class="media-object img-radius" src="\assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                                        <div class="live-status bg-success"></div>
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="f-13 chat-header">Alice</div>
+                                    </div>
+                                </div>
+                                <div class="media userlist-box" data-id="4" data-status="online" data-username="Alia" data-toggle="tooltip" data-placement="left" title="Alia">
+                                    <a class="media-left" href="#!">
+                                        <img class="media-object img-radius" src="\assets\images\avatar-3.jpg" alt="Generic placeholder image">
+                                        <div class="live-status bg-success"></div>
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="f-13 chat-header">Alia</div>
+                                    </div>
+                                </div>
+                                <div class="media userlist-box" data-id="5" data-status="online" data-username="Suzen" data-toggle="tooltip" data-placement="left" title="Suzen">
+                                    <a class="media-left" href="#!">
+                                        <img class="media-object img-radius" src="\assets\images\avatar-2.jpg" alt="Generic placeholder image">
+                                        <div class="live-status bg-success"></div>
+                                    </a>
+                                    <div class="media-body">
+                                        <div class="f-13 chat-header">Suzen</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sidebar inner chat start-->
+            <div class="showChat_inner">
+                <div class="media chat-inner-header">
+                    <a class="back_chatBox">
+                        <i class="feather icon-chevron-left"></i> Josephin Doe
+                    </a>
+                </div>
+                <div class="media chat-messages">
+                    <a class="media-left photo-table" href="#!">
+                        <img class="media-object img-radius img-radius m-t-5" src="\assets\images\avatar-3.jpg" alt="Generic placeholder image">
+                    </a>
+                    <div class="media-body chat-menu-content">
+                        <div class="">
+                            <p class="chat-cont">I'm just looking around. Will you tell me something about yourself?</p>
+                            <p class="chat-time">8:20 a.m.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="media chat-messages">
+                    <div class="media-body chat-menu-reply">
+                        <div class="">
+                            <p class="chat-cont">I'm just looking around. Will you tell me something about yourself?</p>
+                            <p class="chat-time">8:20 a.m.</p>
+                        </div>
+                    </div>
+                    <div class="media-right photo-table">
+                        <a href="#!">
+                            <img class="media-object img-radius img-radius m-t-5" src="\assets\images\avatar-4.jpg" alt="Generic placeholder image">
+                        </a>
+                    </div>
+                </div>
+                <div class="chat-reply-box p-b-20">
+                    <div class="right-icon-control">
+                        <input type="text" class="form-control search-text" placeholder="Share Your Thoughts">
+                        <div class="form-icon">
+                            <i class="feather icon-navigation"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sidebar inner chat end-->
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <nav class="pcoded-navbar">
+                        <div class="pcoded-inner-navbar main-menu">
+                            <div class="pcoded-navigatio-lavel">Navigation</div>
+                            <ul class="pcoded-item pcoded-left-item">
+                                <li class="pcoded-hasmenu active pcoded-trigger">
+                                    <a href="javascript:void(0)">
+                                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                                        <span class="pcoded-mtext">Dashboard</span>
+                                    </a>
+                                    <ul class="pcoded-submenu">
+                                        <li class="">
+                                            <a href="/Pwd-form">
+                                                <span class="">PWD FORM</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="/Senior-form">
+                                                <span class="">SENIORS FORM</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+                            <div class="main-body">
+
+                                <div class="page-wrapper">
+
+                                    <div class="container">
+                                        <div class="form-container">
+                                            <form id="registrationForm">
+                                                <!-- Progress Bar -->
+                                                <div class="progress-container">
+                                                    <div class="progress-steps">
+                                                        <div class="progress-bar" id="progressBar"></div>
+                                                        <div class="step active" data-step="1">
+                                                            1
+                                                            <span class="step-label">Personal Info</span>
+                                                        </div>
+                                                        <div class="step" data-step="2">
+                                                            2
+                                                            <span class="step-label">Contact Info</span>
+                                                        </div>
+                                                        <div class="step" data-step="3">
+                                                            3
+                                                            <span class="step-label">Special Categories</span>
+                                                        </div>
+                                                        <div class="step" data-step="4">
+                                                            4
+                                                            <span class="step-label">Medical Info</span>
+                                                        </div>
+                                                        <div class="step" data-step="5">
+                                                            5
+                                                            <span class="step-label">Review</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                
+                                                <!-- Step 1: Personal Information Section -->
+                                                <div class="form-step active" id="step1">
+                                                    <h2 class="section-title"><i class="fas fa-user"></i> Personal Information</h2>
+                                                    
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="firstName" class="form-label required">First Name</label>
+                                                                <input type="text" id="firstName" name="firstName" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="lastName" class="form-label required">Last Name</label>
+                                                                <input type="text" id="lastName" name="lastName" class="form-control" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="middleName" class="form-label">Middle Name</label>
+                                                                <input type="text" id="middleName" name="middleName" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="birthdate" class="form-label required">Date of Birth</label>
+                                                                <input type="date" id="birthdate" name="birthdate" class="form-control" required onchange="calculateAge()">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="age" class="form-label">Age</label>
+                                                                <input type="number" id="age" name="age" class="form-control" readonly>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label class="form-label required">Gender</label>
+                                                                <div class="radio-group">
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" id="male" name="gender" value="male" required>
+                                                                        <label for="male">Male</label>
+                                                                    </div>
+                                                                    <div class="radio-item">
+                                                                        <input type="radio" id="female" name="gender" value="female">
+                                                                        <label for="female">Female</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="barangay" class="form-label required">Barangay</label>
+                                                                <select id="barangay" name="barangay" class="form-control" required onchange="updateFormFields()">
+                                                                    <option value="" disabled selected>Select Barangay</option>
+                                                                    <option value="1">Barangay 1</option>
+                                                                    <option value="2">Barangay 2</option>
+                                                                    <option value="3">Barangay 3</option>
+                                                                    <option value="4">Barangay 4</option>
+                                                                    <option value="5">Barangay 5</option>
+                                                                    <option value="6">Barangay Mambulac</option>
+                                                                    <option value="7">Barangay Guinhalaran</option>
+                                                                    <option value="8">Barangay E-Lopez</option>
+                                                                    <option value="9">Barangay Bagtic</option>
+                                                                    <option value="10">Barangay Balaring</option>
+                                                                    <option value="11">Barangay Hawaiian</option>
+                                                                    <option value="12">Barangay Patag</option>
+                                                                    <option value="13">Barangay Kapt. Ramon</option>
+                                                                    <option value="14">Barangay Guimbalaon</option>
+                                                                    <option value="15">Barangay Rizal</option>
+                                                                    <option value="16">Barangay Lantad</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="purok" class="form-label required">Purok</label>
+                                                                <select id="purok" name="purok" class="form-control" required>
+                                                                    <option value="" disabled selected>Select Purok</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="buttons-container">
+                                                        <div></div> <!-- Empty div for spacing -->
+                                                        <button type="button" class="btn btn-primary" onclick="nextStep(1)">Next <i class="fas fa-arrow-right"></i></button>
+                                                    </div>
+                                                </div>
+                                
+                                                <!-- Step 2: Contact Information Section -->
+                                                <div class="form-step" id="step2">
+                                                    <h2 class="section-title"><i class="fas fa-phone-alt"></i> Contact Information</h2>
+                                                    
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="contactNumber" class="form-label">Mobile Number</label>
+                                                                <input type="tel" id="contactNumber" name="contactNumber" class="form-control" placeholder="Ex: 09123456789">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="email" class="form-label">Email Address</label>
+                                                                <input type="email" id="email" name="email" class="form-control" placeholder="example@email.com">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="emergencyContact" class="form-label">Emergency Contact Number</label>
+                                                                <input type="tel" id="emergencyContact" name="emergencyContact" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="emergencyContactName" class="form-label">Emergency Contact Name</label>
+                                                                <input type="text" id="emergencyContactName" name="emergencyContactName" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="relationship" class="form-label">Relationship to Emergency Contact</label>
+                                                                <input type="text" id="relationship" name="relationship" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="buttons-container">
+                                                        <button type="button" class="btn btn-secondary" onclick="prevStep(2)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                                        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Next <i class="fas fa-arrow-right"></i></button>
+                                                    </div>
+                                                </div>
+                                
+                                               <!-- Step 3: Special Categories Section -->
+<div class="form-step" id="step3">
+    <h2 class="section-title"><i class="fas fa-hand-holding-heart"></i> Special Categories</h2>
+    
+    <div class="form-group">
+        <label class="form-label">Special Category (if applicable)</label>
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="pwd" name="status" value="pwd" onchange="handleSpecialCategoryChange(this)">
+                <label for="pwd">Person with Disability (PWD)</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="senior" name="status" value="senior" onchange="handleSpecialCategoryChange(this)">
+                <label for="senior">Senior Citizen</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="indigent" name="status" value="indigent" onchange="handleSpecialCategoryChange(this)">
+                <label for="indigent">Both Pwd & Senior</label>
+            </div>
+        </div>
+    </div>
+                                
+                                                    <!-- PWD Specific Section -->
+                                                    <div id="pwdSection" class="conditional-section">
+                                                        <p class="additional-info">Please provide information about your disability to help us serve you better</p>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="pwdIdNumber" class="form-label">PWD ID Number (if available)</label>
+                                                            <input type="text" id="pwdIdNumber" name="pwdIdNumber" class="form-control">
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="disabilityType" class="form-label">Type of Disability</label>
+                                                            <select id="disabilityType" name="disabilityType" class="form-control">
+                                                                <option value="" disabled selected>Select Disability Type</option>
+                                                                <option value="physical">Physical (Orthopedic)</option>
+                                                                <option value="visual">Visual Impairment</option>
+                                                                <option value="hearing">Hearing Impairment</option>
+                                                                <option value="speech">Speech Impairment</option>
+                                                                <option value="intellectual">Intellectual Disability</option>
+                                                                <option value="psychosocial">Psychosocial Disability</option>
+                                                                <option value="learning">Learning Disability</option>
+                                                                <option value="multiple">Multiple Disabilities</option>
+                                                                <option value="other">Other</option>
+                                                            </select>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="accommodationNeeds" class="form-label">Specific Accommodation Needs</label>
+                                                            <textarea id="accommodationNeeds" name="accommodationNeeds" class="form-control" rows="3" placeholder="Please describe any assistance or accommodation you may need"></textarea>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <!-- Senior Citizen Specific Section -->
+                                                    <div id="seniorSection" class="conditional-section">
+                                                        <p class="additional-info">Please provide your senior citizen information</p>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="seniorIdNumber" class="form-label">Senior Citizen ID Number (if available)</label>
+                                                            <input type="text" id="seniorIdNumber" name="seniorIdNumber" class="form-control">
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="pensioner" class="form-label">Pensioner Status</label>
+                                                            <div class="radio-group">
+                                                                <div class="radio-item">
+                                                                    <input type="radio" id="pensionerYes" name="pensioner" value="yes">
+                                                                    <label for="pensionerYes">Receiving Pension</label>
+                                                                </div>
+                                                                <div class="radio-item">
+                                                                    <input type="radio" id="pensionerNo" name="pensioner" value="no">
+                                                                    <label for="pensionerNo">Not Receiving Pension</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="livingArrangement" class="form-label">Living Arrangement</label>
+                                                            <select id="livingArrangement" name="livingArrangement" class="form-control">
+                                                                <option value="" disabled selected>Select Living Arrangement</option>
+                                                                <option value="alone">Living Alone</option>
+                                                                <option value="spouse">With Spouse</option>
+                                                                <option value="children">With Children</option>
+                                                                <option value="relatives">With Other Relatives</option>
+                                                                <option value="caregiver">With Caregiver</option>
+                                                                <option value="facility">In a Care Facility</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="buttons-container">
+                                                        <button type="button" class="btn btn-secondary" onclick="prevStep(3)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                                        <button type="button" class="btn btn-primary" onclick="nextStep(3)">Next <i class="fas fa-arrow-right"></i></button>
+                                                    </div>
+                                                </div>
+                                
+                                                <!-- Step 4: Medical Information Section -->
+                                                <div class="form-step" id="step4">
+                                                    <h2 class="section-title"><i class="fas fa-heartbeat"></i> Medical Information</h2>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="disease" class="form-label">Medical Conditions (if any)</label>
+                                                        <textarea id="disease" name="disease" class="form-control" rows="3" placeholder="List any medical conditions, allergies, or medications you are currently taking"></textarea>
+                                                    </div>
+                                
+                                                    <div class="form-row">
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="healthInsurance" class="form-label">Health Insurance</label>
+                                                                <input type="text" id="healthInsurance" name="healthInsurance" class="form-control" placeholder="e.g., PhilHealth, HMO">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-column">
+                                                            <div class="form-group">
+                                                                <label for="bloodType" class="form-label">Blood Type</label>
+                                                                <select id="bloodType" name="bloodType" class="form-control">
+                                                                    <option value="" disabled selected>Select Blood Type</option>
+                                                                    <option value="A+">A+</option>
+                                                                    <option value="A-">A-</option>
+                                                                    <option value="B+">B+</option>
+                                                                    <option value="B-">B-</option>
+                                                                    <option value="AB+">AB+</option>
+                                                                    <option value="AB-">AB-</option>
+                                                                    <option value="O+">O+</option>
+                                                                    <option value="O-">O-</option>
+                                                                    <option value="unknown">Unknown</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="form-group">
+                                                        <label for="medications" class="form-label">Current Medications</label>
+                                                        <textarea id="medications" name="medications" class="form-control" rows="2" placeholder="List any medications you are currently taking"></textarea>
+                                                    </div>
+                                
+                                                    <div class="buttons-container">
+                                                        <button type="button" class="btn btn-secondary" onclick="prevStep(4)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                                        <button type="button" class="btn btn-primary" onclick="nextStep(4)">Review <i class="fas fa-arrow-right"></i></button>
+                                                    </div>
+                                                </div>
+                                
+                                                <!-- Step 5: Review Information Section -->
+                                                <div class="form-step" id="step5">
+                                                    <h2 class="section-title"><i class="fas fa-check-circle"></i> Review Your Information</h2>
+                                                    
+                                                    <div class="review-container">
+                                                        <div class="review-section">
+                                                            <h3>Personal Information</h3>
+                                                            <div class="review-grid">
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Name:</span>
+                                                                    <span class="review-value" id="review-name">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Date of Birth:</span>
+                                                                    <span class="review-value" id="review-birthdate">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Age:</span>
+                                                                    <span class="review-value" id="review-age">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Gender:</span>
+                                                                    <span class="review-value" id="review-gender">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Barangay:</span>
+                                                                    <span class="review-value" id="review-barangay">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Purok:</span>
+                                                                    <span class="review-value" id="review-purok">-</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="review-section">
+                                                            <h3>Contact Information</h3>
+                                                            <div class="review-grid">
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Mobile Number:</span>
+                                                                    <span class="review-value" id="review-contactNumber">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Email Address:</span>
+                                                                    <span class="review-value" id="review-email">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Emergency Contact:</span>
+                                                                    <span class="review-value" id="review-emergencyContact">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Emergency Contact Name:</span>
+                                                                    <span class="review-value" id="review-emergencyContactName">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Relationship:</span>
+                                                                    <span class="review-value" id="review-relationship">-</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="review-section" id="review-special-section">
+                                                            <h3>Special Categories</h3>
+                                                            <div class="review-grid">
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Special Category:</span>
+                                                                    <span class="review-value" id="review-status">-</span>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- PWD Review -->
+                                                            <div id="review-pwd-section" class="review-subsection">
+                                                                <h4>PWD Information</h4>
+                                                                <div class="review-grid">
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">PWD ID Number:</span>
+                                                                        <span class="review-value" id="review-pwdIdNumber">-</span>
+                                                                    </div>
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">Disability Type:</span>
+                                                                        <span class="review-value" id="review-disabilityType">-</span>
+                                                                    </div>
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">Accommodation Needs:</span>
+                                                                        <span class="review-value" id="review-accommodationNeeds">-</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Senior Citizen Review -->
+                                                            <div id="review-senior-section" class="review-subsection">
+                                                                <h4>Senior Citizen Information</h4>
+                                                                <div class="review-grid">
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">Senior ID Number:</span>
+                                                                        <span class="review-value" id="review-seniorIdNumber">-</span>
+                                                                    </div>
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">Pensioner Status:</span>
+                                                                        <span class="review-value" id="review-pensioner">-</span>
+                                                                    </div>
+                                                                    <div class="review-item">
+                                                                        <span class="review-label">Living Arrangement:</span>
+                                                                        <span class="review-value" id="review-livingArrangement">-</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="review-section">
+                                                            <h3>Medical Information</h3>
+                                                            <div class="review-grid">
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Medical Conditions:</span>
+                                                                    <span class="review-value" id="review-disease">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Health Insurance:</span>
+                                                                    <span class="review-value" id="review-healthInsurance">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Blood Type:</span>
+                                                                    <span class="review-value" id="review-bloodType">-</span>
+                                                                </div>
+                                                                <div class="review-item">
+                                                                    <span class="review-label">Current Medications:</span>
+                                                                    <span class="review-value" id="review-medications">-</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <div class="checkbox-item consent-checkbox">
+                                                            <input type="checkbox" id="consent" name="consent" required>
+                                                            <label for="consent" class="required">I hereby certify that the information provided is true and correct to the best of my knowledge.</label>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="buttons-container">
+                                                        <button type="button" class="btn btn-secondary" onclick="prevStep(5)"><i class="fas fa-arrow-left"></i> Previous</button>
+                                                        <button type="submit" class="btn btn-success" id="submitButton" disabled>Submit Registration <i class="fas fa-paper-plane"></i></button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                                                                                    
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- social end -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="styleSelector">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="\bower_components\jquery\js\jquery.min.js"></script>
+    <script type="text/javascript" src="\bower_components\jquery-ui\js\jquery-ui.min.js"></script>
+    <script type="text/javascript" src="\bower_components\popper.js\js\popper.min.js"></script>
+    <script type="text/javascript" src="\bower_components\bootstrap\js\bootstrap.min.js"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="\bower_components\jquery-slimscroll\js\jquery.slimscroll.js"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" src="\bower_components\modernizr\js\modernizr.js"></script>
+    <script type="text/javascript" src="\bower_components\modernizr\js\css-scrollbars.js"></script>
+    <!-- Chart js -->
+    <script type="text/javascript" src="\bower_components\chart.js\js\Chart.js"></script>
+    <!-- amchart js -->
+    <script src="\assets\pages\widget\amchart\amcharts.js"></script>
+    <script src="\assets\pages\widget\amchart\serial.js"></script>
+    <script src="\assets\pages\widget\amchart\light.js"></script>
+    <!-- Custom js -->
+    <script type="text/javascript" src="\assets\js\SmoothScroll.js"></script>
+    <script src="\assets\js\pcoded.min.js"></script>
+    <script src="\assets\js\jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="\assets\js\vartical-layout.min.js"></script>
+    <script type="text/javascript" src="\assets\pages\dashboard\analytic-dashboard.min.js"></script>
+    <script type="text/javascript" src="\assets\js\script.js"></script>
+    <script type="text/javascript" src="\assets\js\crm.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-23581568-13');
+
+  function handleSpecialCategoryChange(checkbox) {
+    const checkboxes = document.querySelectorAll('input[name="status"]');
+    
+    if (checkbox.checked) {
+        // Disable all other checkboxes
+        checkboxes.forEach(cb => {
+            if (cb !== checkbox) {
+                cb.disabled = true;
+            }
+        });
+    } else {
+        // Enable all checkboxes when current one is unchecked
+        checkboxes.forEach(cb => {
+            cb.disabled = false;
+        });
+    }
+    
+    // Call your existing toggle functions if needed
+    if (checkbox.id === 'pwd') {
+        togglePWDSection();
+    } else if (checkbox.id === 'senior') {
+        toggleSeniorSection();
+    }
+    // Add any other specific functions you need to call
+}
+    
+</script>
+</body>
+
+</html>

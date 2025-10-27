@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silay Housing Authority - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" type="text/css" href="\assets\css\login.css">
+</head>
+<body>
+    <div class="main-container">
+        <div class="login-container">
+            <div class="login-image">
+                <img src="http://www.cameleon-association.org/wp-content/uploads/2018/12/Ph_seal_negros_occidental_silay.png" alt="Logo" class="logo">
+                <h2>Welcome to</h2>  
+                <h1 class="mb-4">Silay Inclusive Living</h1>  
+                <p>Committed to providing safe, accessible, and comfortable housing for PWDs and seniors in our community.</p>
+            </div>
+            <div class="login-form">
+                <h3 class="text-center mb-4">Login to Your Account</h3>
+                <form method="POST" action="/login" id="loginForm">
+                    <input type="hidden" name="role" id="selected-role" value="user">
+                    <div class="form-group">
+                        <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <button type="submit" class="btn btn-login btn-block">Sign In</button>
+                    
+                </form>
+                <br>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script type="text/javascript" src="\assets\js\auth.js"></script>
+
+</body>
+</html>
