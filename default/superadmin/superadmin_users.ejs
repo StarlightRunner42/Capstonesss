@@ -167,53 +167,63 @@
 
 									<div class="admin-container">
 									
-										<div class="user-list-container">
+																				<div class="user-list-container">
 
-											<table id="user-table">
-  <thead>
-    <tr>
-	  <th>Name</th>
-      <th>Email</th>
-      <th>Role</th>
-      <th>Status</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody id="user-list">
-    <% if (users && users.length > 0) { %>
-      <% users.forEach(function(user) { %>
-        <tr>
-		  <td><%= user.name %></td>
-          <td><%= user.email %></td>
-          <td><%= user.role %></td>
-          <td><%= user.status %></td>
-          <td>
-            <!-- Add your action buttons/links here -->
-            <button type="button" class="btn btn-link p-0 open-edit"
-              data-id="<%= user._id %>" 
-              data-name="<%= user.name %>" 
-              data-email="<%= user.email %>" 
-              data-role="<%= user.role %>" 
-              data-status="<%= user.status %>">Edit</button>
-            <form action="/edit-user" method="POST" style="display:inline-block; margin-left:8px;">
-                <input type="hidden" name="id" value="<%= user._id %>" required>
-                <button type="submit" class="btn btn-link p-0 <%= user.status === 'Inactive' ? '' : 'text-danger' %>">
-                  <%= user.status === 'Inactive' ? 'Activate' : 'Deactivate' %>
-                </button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    <% } else { %>
-      <tr>
-        <td colspan="6">No users found</td>
-      </tr>
-    <% } %>
-  </tbody>
+																						<!-- Nav tabs to separate users by status -->
+																						<ul class="nav nav-tabs" id="userTabs" role="tablist">
+																							<li class="nav-item">
+																								<a class="nav-link active" href="#" data-status="Active">Active</a>
+																							</li>
+																							<li class="nav-item">
+																								<a class="nav-link" href="#" data-status="Inactive">Inactive</a>
+																							</li>
+																	
+																						</ul>
+
+																						<table id="user-table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Email</th>
+			<th>Role</th>
+			<th>Status</th>
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody id="user-list">
+		<% if (users && users.length > 0) { %>
+			<% users.forEach(function(user) { %>
+				<tr class="user-row status-<%= user.status %>">
+					<td><%= user.name %></td>
+					<td><%= user.email %></td>
+					<td><%= user.role %></td>
+					<td><%= user.status %></td>
+					<td>
+						<button type="button" class="btn btn-link p-0 open-edit"
+							data-id="<%= user._id %>" 
+							data-name="<%= user.name %>" 
+							data-email="<%= user.email %>" 
+							data-role="<%= user.role %>" 
+							data-status="<%= user.status %>">Edit</button>
+						<form action="/edit-user" method="POST" style="display:inline-block; margin-left:8px;">
+								<input type="hidden" name="id" value="<%= user._id %>" required>
+								<button type="button" class="btn btn-link p-0 status-btn <%= user.status === 'Inactive' ? '' : 'text-danger' %>" data-action="<%= user.status === 'Inactive' ? 'activate' : 'deactivate' %>">
+									<%= user.status === 'Inactive' ? 'Activate' : 'Deactivate' %>
+								</button>
+						</form>
+					</td>
+				</tr>
+			<% }); %>
+		<% } else { %>
+			<tr>
+				<td colspan="6">No users found</td>
+			</tr>
+		<% } %>
+	</tbody>
 </table>
 
 
-										</div>
+																				</div>
 										
 										<!-- Edit User Modal -->
 										<div id="edit-modal" class="modal">
@@ -305,7 +315,50 @@
 		<script type="text/javascript" src="/assets/pages/dashboard/crm-dashboard.min.js"></script>
 		<script type="text/javascript" src="/assets/js/script.js"></script>
 		<!-- Removed update.js here to avoid preventing form submit on this page -->
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 		<script>
+		  // Tab switching and status confirm handlers
+		  $(function(){
+		    // Show only rows matching the active tab on load
+		    function showStatus(status){
+		      $('.user-row').hide();
+		      $('.status-' + status).show();
+		    }
+		    showStatus('Active');
+
+		    $('#userTabs .nav-link').on('click', function(e){
+		      e.preventDefault();
+		      $('#userTabs .nav-link').removeClass('active');
+		      $(this).addClass('active');
+		      var status = $(this).data('status');
+		      showStatus(status);
+		    });
+
+		    // Handle activate/deactivate clicks
+		    $(document).on('click', '.status-btn', function(e){
+		      e.preventDefault();
+		      var action = $(this).data('action');
+		      var form = $(this).closest('form');
+		      if (action === 'deactivate'){
+		        Swal.fire({
+		          title: 'Confirm Deactivation',
+		          text: 'Make sure you want to deactivate this account.',
+		          icon: 'warning',
+		          showCancelButton: true,
+		          confirmButtonText: 'Yes, deactivate',
+		          cancelButtonText: 'Cancel'
+		        }).then((result) => {
+		          if (result.isConfirmed) {
+		            form.submit();
+		          }
+		        });
+		      } else {
+		        // Activate - no confirmation
+		        form.submit();
+		      }
+		    });
+		  });
+
 		  $(document).on('click', '.open-edit', function() {
 			const id = $(this).data('id');
 			const name = $(this).data('name');
