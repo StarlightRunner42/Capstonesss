@@ -61,13 +61,22 @@ function validateCurrentStep(currentStep) {
   });
   
   // Special validation for contact information
+  // Allow contact section to be completely empty. Only validate an entry
+  // when the user has entered at least one value in that entry.
   if (currentStep === 1) {
     const contactEntries = document.querySelectorAll('.contact-entry');
     contactEntries.forEach(entry => {
-      const name = entry.querySelector('input[name$="[name]"]').value;
-      const relationship = entry.querySelector('input[name$="[relationship]"]').value;
-      const phone = entry.querySelector('input[name$="[phone]"]').value;
-      
+      const name = entry.querySelector('input[name$="[name]"]').value.trim();
+      const relationship = entry.querySelector('input[name$="[relationship]"]').value.trim();
+      const phone = entry.querySelector('input[name$="[phone]"]').value.trim();
+
+      // If the entire entry is empty, skip validation for this entry
+      if (!name && !relationship && !phone) {
+        entry.style.border = '';
+        return;
+      }
+
+      // If any field is filled, require all fields for that entry
       if (!name || !relationship || !phone) {
         isValid = false;
         entry.style.border = '1px solid red';
