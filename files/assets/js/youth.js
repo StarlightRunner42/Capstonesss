@@ -218,7 +218,7 @@ function validateCurrentStep(currentStep) {
     
     if (!isValid) {
         Swal.fire({
-            title: "Validation Error",
+            title: "Missing Information",
             text: "Please complete all required fields before proceeding.",
             icon: "error"
         });

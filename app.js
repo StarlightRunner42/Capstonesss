@@ -47,9 +47,12 @@ app.listen(PORT, () => {
 
 // To do:
 
-// fix login where cant login if inactive
+//remove back button on first tab on PDAO Form
 
-//fix PDAO filtering doesnt work on baranggay check specific (might be the error from adding check marks to table)
+//add Generate report on all table
+
+//make pension can be empty on senior form
+
 
 
 
