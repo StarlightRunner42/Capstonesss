@@ -913,17 +913,33 @@ Thank you!</textarea>
 		<!-- Modal Population Script -->
 		<script>
 			$(document).ready(function() {
-				// Event listener for view youth buttons
-				$(document).on('click', '.view-youth-btn', function() {
+				// Event listener for view youth buttons (support both `.view-btn` and existing `.view-youth-btn`)
+				$(document).on('click', '.view-btn, .view-youth-btn', function() {
 					const $button = $(this);
-					
-					// Debug: Log all data attributes
-					console.log('Button data attributes:', {
-						'data-youth-classification': $button.data('youth-classification'),
-						'data-youth-age-group': $button.data('youth-age-group')
+
+					// Utility: try parsing a data-* attribute as JSON array, fallback gracefully
+					function parseAttrArray(attrName) {
+						const raw = $button.attr(attrName);
+						if (!raw) return [];
+						try {
+							return JSON.parse(raw);
+						} catch (e) {
+							const key = attrName.replace(/^data-/, '');
+							const d = $button.data(key);
+							if (Array.isArray(d)) return d;
+							if (d === undefined || d === null) return [];
+							// If it's a single string value, return as single-element array
+							return typeof d === 'string' ? [d] : [];
+						}
+					}
+
+					// Debug: Log some attributes
+					console.log('Button data attributes (sample):', {
+						youthClassificationAttr: $button.attr('data-youth-classification'),
+						youthAgeGroupAttr: $button.attr('data-youth-age-group')
 					});
-					
-					// Get data from button attributes
+
+					// Get data from button attributes, parsing arrays where needed
 					const youthData = {
 						firstName: $button.data('first-name') || '',
 						middleName: $button.data('middle-name') || '',
@@ -943,12 +959,12 @@ Thank you!</textarea>
 						assembly: $button.data('assembly') || '',
 						skTimes: $button.data('sk-times') || '',
 						reason: $button.data('reason') || '',
-						youthClassification: $button.data('youth-classification') || '[]',
+						youthClassification: parseAttrArray('data-youth-classification'),
 						youthClassificationOther: $button.data('youth-classification-other') || '',
-						youthAgeGroup: $button.data('youth-age-group') || '[]',
+						youthAgeGroup: parseAttrArray('data-youth-age-group'),
 						youthAgeGroupOther: $button.data('youth-age-group-other') || ''
 					};
-					
+
 					// Populate modal fields
 					populateYouthModal(youthData);
 				});
@@ -1065,38 +1081,32 @@ Thank you!</textarea>
 		<!-- Edit Modal Script -->
 		<script>
 			$(document).ready(function() {
-				// Event listener for edit youth buttons
-				$(document).on('click', '.edit-youth-btn', function() {
+				// Event listener for edit youth buttons (support both `.edit-btn` and existing `.edit-youth-btn`)
+				$(document).on('click', '.edit-btn, .edit-youth-btn', function() {
 					const $button = $(this);
-					
-					// Debug: Log all data attributes
-					console.log('Edit Button clicked - All data attributes:', {
-						'data-youth-id': $button.data('youth-id'),
-						'data-first-name': $button.data('first-name'),
-						'data-middle-name': $button.data('middle-name'),
-						'data-last-name': $button.data('last-name'),
-						'data-contact': $button.data('contact'),
-						'data-birthday': $button.data('birthday'),
-						'data-age': $button.data('age'),
-						'data-gender': $button.data('gender'),
-						'data-place-of-birth': $button.data('place-of-birth'),
-						'data-education-level': $button.data('education-level'),
-						'data-registered-sk': $button.data('registered-sk'),
-						'data-voted-sk': $button.data('voted-sk'),
-						'data-registered-national': $button.data('registered-national'),
-						'data-employment-status': $button.data('employment-status'),
-						'data-employment-category': $button.data('employment-category'),
-						'data-employment-type': $button.data('employment-type'),
-						'data-assembly': $button.data('assembly'),
-						'data-sk-times': $button.data('sk-times'),
-						'data-reason': $button.data('reason'),
-						'data-youth-classification': $button.data('youth-classification'),
-						'data-youth-classification-other': $button.data('youth-classification-other'),
-						'data-youth-age-group': $button.data('youth-age-group'),
-						'data-youth-age-group-other': $button.data('youth-age-group-other')
+
+					// Utility: try parsing a data-* attribute as JSON array, fallback gracefully
+					function parseAttrArray(attrName) {
+						const raw = $button.attr(attrName);
+						if (!raw) return [];
+						try {
+							return JSON.parse(raw);
+						} catch (e) {
+							const key = attrName.replace(/^data-/, '');
+							const d = $button.data(key);
+							if (Array.isArray(d)) return d;
+							if (d === undefined || d === null) return [];
+							return typeof d === 'string' ? [d] : [];
+						}
+					}
+
+					// Debug: Log some attributes
+					console.log('Edit Button clicked - sample attributes:', {
+						idAttr: $button.attr('data-youth-id'),
+						youthClassificationAttr: $button.attr('data-youth-classification')
 					});
-					
-					// Get data from button attributes
+
+					// Get data from button attributes, parsing arrays where needed
 					const youthData = {
 						youthId: $button.data('youth-id') || '',
 						firstName: $button.data('first-name') || '',
@@ -1117,12 +1127,12 @@ Thank you!</textarea>
 						assembly: $button.data('assembly') || '',
 						skTimes: $button.data('sk-times') || '',
 						reason: $button.data('reason') || '',
-						youthClassification: $button.data('youth-classification') || [],
+						youthClassification: parseAttrArray('data-youth-classification'),
 						youthClassificationOther: $button.data('youth-classification-other') || '',
-						youthAgeGroup: $button.data('youth-age-group') || [],
+						youthAgeGroup: parseAttrArray('data-youth-age-group'),
 						youthAgeGroupOther: $button.data('youth-age-group-other') || ''
 					};
-					
+
 					// Populate edit form
 					populateEditForm(youthData);
 				});
@@ -1291,7 +1301,119 @@ Thank you!</textarea>
 						}
 					});
 				});
-			});
-		</script>
+							});
+						});
+					</script>
+
+					<!-- SMS selection & send script (matches senior behaviors) -->
+					<script>
+						$(function() {
+							const sendBtn = $('#sendSmsBtn');
+							const recipientsListEl = $('#recipientsList');
+							const openSmsBtn = $('#openSmsForSelected');
+							const smsMessage = $('#smsMessage');
+							const charCount = $('#charCount');
+
+							function updateCharCount() {
+								if (!charCount.length || !smsMessage.length) return;
+								charCount.text(smsMessage.val().length);
+							}
+
+							// initial charcount
+							smsMessage.on('input', updateCharCount);
+							updateCharCount();
+
+							function refreshOpenSmsState() {
+								const any = $('.row-checkbox:checked').length > 0;
+								openSmsBtn.prop('disabled', !any);
+							}
+
+							// watch row checkboxes
+							$(document).on('change', '.row-checkbox', refreshOpenSmsState);
+							refreshOpenSmsState();
+
+							// When clicking the Open SMS button, populate recipients and show modal
+							openSmsBtn.on('click', function() {
+								const checked = $('.row-checkbox:checked');
+								recipientsListEl.empty();
+								if (checked.length === 0) {
+									recipientsListEl.html('<em>No recipients selected</em>');
+									return;
+								}
+
+								checked.each(function() {
+									const phone = $(this).data('phone') || '';
+									const name = $(this).data('name') || '';
+									const item = $('<div/>', {
+										class: 'recipient-item mb-1',
+										'data-phone': phone,
+										'data-name': name,
+										ext: name + (phone ? ' (' + phone + ')' : '')
+									});
+									recipientsListEl.append(item);
+								});
+
+								// show modal (bootstrap v4/v5 compatible handling)
+								$('#assistanceModal').modal('show');
+							});
+
+							// Send SMS handler
+							sendBtn.on('click', function() {
+								const btn = $(this);
+								if (btn.data('sending') === 1) return;
+
+								const message = smsMessage.val() ? smsMessage.val().trim() : '';
+								if (!message) {
+									alert('Please enter a message to send.');
+									return;
+								}
+
+								const recipients = recipientsListEl.find('.recipient-item').map(function() {
+									return {
+										phone: $(this).data('phone'),
+										name: $(this).data('name')
+									};
+								}).get();
+
+								if (!recipients.length) {
+									alert('No recipients available to send to.');
+									return;
+								}
+
+								const originalHtml = btn.html();
+								btn.data('sending', 1).prop('disabled', true).text('Sending...');
+
+								// Send via AJAX POST to server endpoint
+								$.ajax({
+									url: '/send-sms',
+									method: 'POST',
+									contentType: 'application/json',
+									data: JSON.stringify({ message: message, recipients: recipients }),
+									success: function(res) {
+										btn.data('sending', 0).prop('disabled', false).html(originalHtml);
+										alert((res && res.success) ? 'SMS sent successfully.' : 'SMS request completed.');
+										// hide modal and reset
+										$('#assistanceModal').modal('hide');
+										$('.row-checkbox').prop('checked', false);
+										refreshOpenSmsState();
+										recipientsListEl.html('<em>No recipients selected</em>');
+										updateCharCount();
+									},
+									error: function(xhr) {
+										console.error('Error sending SMS:', xhr);
+										btn.data('sending', 0).prop('disabled', false).html(originalHtml);
+										alert('Error sending SMS. Check console for details.');
+									}
+								});
+							});
+
+							// Reset when modal closed
+							$('#assistanceModal').on('hidden.bs.modal', function() {
+								$('#smsForm')[0] && $('#smsForm')[0].reset();
+								recipientsListEl.html('<em>No recipients selected</em>');
+								updateCharCount();
+							});
+						});
+					</script>
 	</body>
-</html>
+	</html>
