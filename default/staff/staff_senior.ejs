@@ -233,7 +233,7 @@
                                                         <tr>
                                                             <td>
                                                                 <input type="checkbox" class="row-checkbox" value="<%= senior._id || senior.id %>" aria-label="Select row"
-                                                                    data-phone="<%= (senior.identifying_information.contact_information && senior.identifying_information.contact_information.length && senior.identifying_information.contact_information[0].contact_number) ? senior.identifying_information.contact_information[0].contact_number : '' %>"
+                                                                    data-phone="<%= (senior.identifying_information.contacts && senior.identifying_information.contacts.length && senior.identifying_information.contacts[0].phone) ? senior.identifying_information.contacts[0].phone : '' %>"
                                                                     data-name="<%= senior.identifying_information.name.first_name + ' ' + senior.identifying_information.name.last_name %>">
                                                             </td>
                                                             <td>
@@ -283,41 +283,45 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="assistanceModalLabel">
-                                                                <i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS
+                                                                <i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS Assistance
                                                             </h5>
                                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="smsForm">
+
                                                                 <div class="mb-2">
-                                                                    <label class="form-label">Recipients:</label>
-                                                                    <div id="recipientsList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                                                                    <label class="form-label">Recipients</label>
+                                                                    <div id="recipientsList" style="max-height:150px; overflow:auto; border:1px solid #e9ecef; padding:8px; border-radius:4px;">
+                                                                        <!-- Filled dynamically with selected recipients -->
                                                                         <em>No recipients selected</em>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="sms-template">
-                                                                    <label for="smsMessage" class="form-label">Message:</label>
-                                                                    <textarea id="smsMessage" class="form-control" rows="4">Dear Senior Citizen,
+                                                                    <label class="form-label">
+                                                                        <i data-feather="message-square" style="width: 16px; height: 16px;"></i> Message Template
+                                                                    </label>
+                                                                    <textarea class="form-control" id="smsMessage" rows="6" required>Hello! 
 
-You are eligible for senior citizen benefits including:
-- 20% discount on medicines, medical services & transportation
-- Priority lane access
-- Social pension program
-- Other privileges under RA 9994
+            You are eligible for senior citizen benefits including:
+            - 20% discount on medicines, medical services & transportation
+            - Priority lane access
+            - Social pension program
+            - Other privileges under RA 9994
 
-Visit your local office to claim your benefits.
+            Visit your local office to claim your benefits.
 
-Thank you!</textarea>
+            Thank you!</textarea>
                                                                     <small class="text-muted">You can edit this message before sending</small>
                                                                 </div>
 
-                                                                <!-- Character Counter -->
-                                                                <div class="mb-3">
-                                                                    <small class="text-muted">
-                                                                        Characters: <span id="charCount">0</span>/160
-                                                                    </small>
-                                                                </div>
+                                                        <!-- Character Counter -->
+                                                        <div class="mb-3">
+                                                            <small class="text-muted">
+                                                                Characters: <span id="charCount">0</span>/160
+                                                            </small>
+                                                        </div>
                                                             </form>
                                                         </div>
                                                         <div class="modal-footer">
@@ -1212,6 +1216,200 @@ Thank you!</textarea>
             );
         });
     </script>
+
+    <script>
+    // Character Counter (SMS)
+    (function() {
+        const smsMessage = document.getElementById('smsMessage');
+        const charCount = document.getElementById('charCount');
+
+        function updateCharCount() {
+            if (!charCount || !smsMessage) return;
+            charCount.textContent = smsMessage.value.length;
+        }
+
+        if (smsMessage) {
+            smsMessage.addEventListener('input', updateCharCount);
+            updateCharCount(); // Initial count
+        }
+
+        // Attach SMS handler and modal logic
+        (function() {
+            const sendBtn = document.getElementById('sendSmsBtn');
+            const recipientsListEl = document.getElementById('recipientsList');
+            const openSmsBtn = document.getElementById('openSmsForSelected');
+
+            if (sendBtn) {
+                sendBtn.addEventListener('click', async function() {
+                    const btn = this;
+                    
+                    // Prevent multiple simultaneous sends
+                    if (btn.dataset.sending === '1') return;
+                    btn.dataset.sending = '1';
+
+                    const originalText = btn.innerHTML;
+                    const messageEl = document.getElementById('smsMessage');
+                    const message = messageEl ? messageEl.value.trim() : '';
+                    const recipients = recipientsListEl ? Array.from(recipientsListEl.querySelectorAll('.recipient-item')).map(el => ({
+                        phone: el.dataset.phone,
+                        name: el.dataset.name
+                    })) : [];
+
+                    // Validation
+                    if (!message) {
+                        delete btn.dataset.sending;
+                        alert('Please enter a message');
+                        return;
+                    }
+                    if (!recipients.length) {
+                        delete btn.dataset.sending;
+                        alert('No recipients selected');
+                        return;
+                    }
+
+                    // UI feedback
+                    btn.setAttribute('disabled', 'disabled');
+                    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+                    try {
+                        const resp = await fetch('/send-sms', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ recipients, message })
+                        });
+
+                        // Check HTTP status first
+                        if (!resp.ok) {
+                            throw new Error(`HTTP error! status: ${resp.status}`);
+                        }
+
+                        // Try to parse JSON response
+                        let data = null;
+                        try {
+                            data = await resp.json();
+                        } catch (jsonErr) {
+                            console.warn('Invalid JSON response from server:', jsonErr);
+                            // Even if JSON parsing fails, if we got 200, consider it success
+                            alert('SMS has been sent successfully!');
+                            closeModalAndReset();
+                            return;
+                        }
+
+                        // Check for success in response data
+                        if (data && data.success === true) {
+                            alert('SMS has been sent successfully!');
+                            console.log('SMS results:', data.results);
+                            closeModalAndReset();
+                        } else {
+                            // Server returned success: false or no success property
+                            const errorMsg = data && data.error ? data.error : 'SMS sending failed';
+                            console.error('SMS service reported failure:', errorMsg);
+                            alert('Failed to send SMS: ' + errorMsg);
+                        }
+
+                    } catch (err) {
+                        console.error('Error sending SMS:', err);
+                        // Only show service down message for network errors or server errors
+                        if (err.message.includes('HTTP error') || err.name === 'TypeError') {
+                            alert('The SMS service is down at the moment, sorry. Please try again later.');
+                        } else {
+                            alert('An unexpected error occurred: ' + err.message);
+                        }
+                    } finally {
+                        // Always clean up
+                        delete btn.dataset.sending;
+                        btn.removeAttribute('disabled');
+                        btn.innerHTML = originalText;
+                    }
+                });
+            }
+
+            function closeModalAndReset() {
+                // Close modal
+                const modalEl = document.getElementById('assistanceModal');
+                if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                    $('#assistanceModal').modal('hide');
+                } else {
+                    modalEl.style.display = 'none';
+                    modalEl.classList.remove('show');
+                }
+
+                // Reset form
+                const form = document.getElementById('smsForm');
+                if (form) form.reset();
+                updateCharCount();
+            }
+
+            // Open SMS modal for selected rows
+            if (openSmsBtn && recipientsListEl) {
+                function refreshOpenSmsState() {
+                    const anyChecked = Array.from(document.querySelectorAll('.row-checkbox')).some(cb => cb.checked);
+                    openSmsBtn.disabled = !anyChecked;
+                }
+
+                openSmsBtn.addEventListener('click', function() {
+                    const selected = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+                    recipientsListEl.innerHTML = '';
+
+                    if (!selected.length) {
+                        recipientsListEl.innerHTML = '<em>No recipients selected</em>';
+                        return;
+                    }
+
+                    selected.forEach(cb => {
+                        const phone = cb.dataset.phone || cb.getAttribute('data-phone') || '';
+                        const name = cb.dataset.name || cb.getAttribute('data-name') || '';
+
+                        // Only add if phone number exists
+                        if (phone) {
+                            const item = document.createElement('div');
+                            item.className = 'recipient-item';
+                            item.dataset.phone = phone;
+                            item.dataset.name = name;
+                            item.style.padding = '4px 6px';
+                            item.style.borderBottom = '1px solid #f1f1f1';
+                            item.innerHTML = `<strong>${name}</strong> <span class="text-muted">${phone}</span>`;
+                            recipientsListEl.appendChild(item);
+                        }
+                    });
+
+                    // Show modal
+                    const modalEl = document.getElementById('assistanceModal');
+                    if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modal = new bootstrap.Modal(modalEl);
+                        modal.show();
+                    } else if (typeof $ !== 'undefined' && $.fn.modal) {
+                        $('#assistanceModal').modal('show');
+                    } else {
+                        modalEl.style.display = 'block';
+                        modalEl.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                    }
+                });
+
+                // Watch row checkboxes to enable/disable openSmsBtn
+                document.querySelectorAll('.row-checkbox').forEach(cb => cb.addEventListener('change', refreshOpenSmsState));
+                refreshOpenSmsState();
+            }
+        })();
+
+        // Reset form when modal is closed
+        const assistanceModalEl = document.getElementById('assistanceModal');
+        if (assistanceModalEl) {
+            assistanceModalEl.addEventListener('hidden.bs.modal', function () {
+                const form = document.getElementById('smsForm');
+                if (form) form.reset();
+                updateCharCount();
+            });
+        }
+    })();
+</script>
 
     <!-- Required Jquery -->
     <script type="text/javascript" src="\bower_components\jquery\js\jquery.min.js"></script>
