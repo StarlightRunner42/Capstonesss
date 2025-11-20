@@ -1344,17 +1344,27 @@ Thank you!</textarea>
 								checked.each(function() {
 									const phone = $(this).data('phone') || '';
 									const name = $(this).data('name') || '';
-									const item = $('<div/>', {
-										class: 'recipient-item mb-1',
-										'data-phone': phone,
-										'data-name': name,
-										ext: name + (phone ? ' (' + phone + ')' : '')
-									});
-									recipientsListEl.append(item);
+
+									// Only add if phone exists (similar to senior behavior)
+									if (phone) {
+										const item = $('<div/>', {
+											class: 'recipient-item mb-1',
+											'data-phone': phone,
+											'data-name': name
+										});
+										item.text(name + (phone ? ' (' + phone + ')' : ''));
+										recipientsListEl.append(item);
+									}
 								});
 
 								// show modal (bootstrap v4/v5 compatible handling)
-								$('#assistanceModal').modal('show');
+								if ($('#assistanceModal').length && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+									const modalEl = document.getElementById('assistanceModal');
+									const modal = new bootstrap.Modal(modalEl);
+									modal.show();
+								} else {
+									$('#assistanceModal').modal('show');
+								}
 							});
 
 							// Send SMS handler
