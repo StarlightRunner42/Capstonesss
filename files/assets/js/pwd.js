@@ -94,16 +94,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Special validation for contact information step
+    // Special validation for contact information step — only validate fields that are required
     if (currentStep === 1) {
         const contactEntries = document.querySelectorAll('.contact-entry');
         contactEntries.forEach(entry => {
-            const contactType = entry.querySelector('.contact-type').value;
-            const name = entry.querySelector('input[name$="[name]"]').value;
-            const relationship = entry.querySelector('input[name$="[relationship]"]').value;
-            const phone = entry.querySelector('input[name$="[phone]"]').value;
-            
-            if (!name || !relationship || !phone) {
+            let entryValid = true;
+            const requiredFields = entry.querySelectorAll('[required]');
+            requiredFields.forEach(field => {
+                const value = (field.value || '').trim();
+                if (!value) {
+                    entryValid = false;
+                    field.style.borderColor = 'red';
+                    // scroll to first invalid field
+                    if (isValid) field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+            if (!entryValid) {
                 isValid = false;
                 entry.style.border = '1px solid red';
             } else {
