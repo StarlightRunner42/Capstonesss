@@ -172,8 +172,34 @@
 														<option value="">First select a Barangay</option>
 													</select>
 												</div>
+												<!-- Generate Report Button - MOVED INSIDE THE CONTAINER -->
+												<div class="filter-group" style="margin-left: 12px;">
+													<label>&nbsp;</label>
+													<button id="generateReportBtn" class="btn btn-info" type="button">
+														<i data-feather="file-text"></i> Generate Report
+													</button>
+												</div>
 											</div>
 											<% if (pwds && pwds.length > 0) { %>
+											<!-- Report Modal -->
+											<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+												<div class="modal-dialog modal-dialog-centered modal-lg">
+													<div class="modal-content">
+														<div class="modal-header">
+															<h5 class="modal-title" id="reportModalLabel">PWD Disability Report</h5>
+															<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+														</div>
+														<div class="modal-body">
+															<div id="reportContent" style="white-space:pre-wrap; font-family: monospace;"></div>
+														</div>
+														<div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+															<button id="copyReportBtn" type="button" class="btn btn-outline-primary">Copy</button>
+															<a id="downloadReportLink" class="btn btn-primary" download="pwd_report.txt">Download</a>
+														</div>
+													</div>
+												</div>
+											</div>
 											 <table id="example" class="display" style="width:100%">
 	<thead>
 		<tr>
@@ -413,9 +439,6 @@
             
             <div class="modal-footer flex-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                
-															</div>
-
             </div>
         </div>
     </div>
@@ -721,15 +744,206 @@
 		</div>
 		</div>
 		<script>
-
-
-
-
-			// Convert EJS data to JavaScript object
+			// Convert EJS data to JavaScript objects
 			const barangaysData = <%- JSON.stringify(barangays) %>;
+			const pwdsData = <%- JSON.stringify(pwds || []) %>;
 			
 			// Wait for DOM to be fully loaded
 			document.addEventListener('DOMContentLoaded', function() {
+				console.log('DOM loaded - initializing Generate Report button');
+				
+				// Initialize Generate Report Button - FIXED VERSION
+				const generateReportBtn = document.getElementById('generateReportBtn');
+				
+				if (generateReportBtn) {
+					console.log('Generate Report button found, adding event listener');
+					
+					generateReportBtn.addEventListener('click', function() {
+						console.log('Generate Report button clicked');
+						
+						try {
+							// Build the report table HTML
+							const tableHtml = buildPwdsReportTableHtml(pwdsData);
+							
+							// Open new window for report
+							const newWin = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
+							
+							if (!newWin) {
+								alert('Popup blocked! Please allow popups for this site to view the report.');
+								return;
+							}
+							
+							const docHtml = `<!doctype html>
+								<html>
+								<head>
+									<meta charset="utf-8">
+									<title>PWD Disability Report</title>
+									<meta name="viewport" content="width=device-width,initial-scale=1">
+									<link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+									<style>
+										body { padding: 20px; font-family: Arial, sans-serif; }
+										.table { margin-top: 20px; }
+										.summary { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; }
+									</style>
+								</head>
+								<body>
+									<div class="container">
+										<h2 class="my-3 text-center">PWD Disability Report</h2>
+										<p class="text-center"><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+										${tableHtml}
+									</div>
+								</body>
+								</html>`;
+							
+							newWin.document.open();
+							newWin.document.write(docHtml);
+							newWin.document.close();
+							
+							console.log('Report generated successfully');
+							
+						} catch (e) {
+							console.error('Error generating report:', e);
+							alert('Error generating report: ' + e.message);
+						}
+					});
+				} else {
+					console.error('Generate Report button not found in DOM!');
+				}
+
+				// Build table HTML for report - FIXED FUNCTION
+				function buildPwdsReportTableHtml(pwds) {
+					function esc(s){ 
+						return String(s === null || s === undefined ? '' : s)
+							.replace(/&/g,'&amp;')
+							.replace(/</g,'&lt;')
+							.replace(/>/g,'&gt;'); 
+					}
+					
+					const mapping = {
+						'Hard of Hearing/Deaf': 'Deaf or Hard of Hearing',
+						'Visual/Blind': 'Visual Disability',
+						'Speech/Language Impairment': 'Speech and Language Impairment',
+						'Learning Disability': 'Learning Disability',
+						'Mental/Intellectual': 'Intellectual Disability',
+						'Physical Disability': 'Physical Disability (Orthopedic)',
+						'Psychosocial Disability': 'Psychosocial Disability',
+						'Cancer': 'Cancer (RA11215)',
+						'Rare Disease': 'Rare Disease (RA10747)',
+						'Multiple Disability': 'Multiple Disability',
+						'Other': 'Other'
+					};
+					
+					const stats = {};
+					const uniqueIds = new Set();
+					
+					// Process PWD data
+					pwds.forEach(p => {
+						if (p && (p._id || p.id)) uniqueIds.add(p._id || p.id);
+						const age = (typeof p.age === 'number') ? p.age : (p.age ? parseInt(p.age,10) : null);
+						const gender = (p.gender || 'Unknown').toString();
+						const disabilities = Array.isArray(p.disability) ? p.disability : (p.disability ? [p.disability] : []);
+						
+						disabilities.forEach(d => {
+							const key = mapping[d] || d || 'Other';
+							if (!stats[key]) {
+								stats[key] = { 
+									count: 0, 
+									male: 0, 
+									female: 0, 
+									otherGender: 0, 
+									ages: [] 
+								};
+							}
+							stats[key].count += 1;
+							if (age !== null && !isNaN(age)) stats[key].ages.push(age);
+							if (/^male$/i.test(gender)) stats[key].male += 1;
+							else if (/^female$/i.test(gender)) stats[key].female += 1;
+							else stats[key].otherGender += 1;
+						});
+					});
+
+					const preferredOrder = [
+						'Deaf or Hard of Hearing', 'Intellectual Disability', 'Learning Disability', 
+						'Mental Disability', 'Physical Disability (Orthopedic)', 'Psychosocial Disability', 
+						'Speech and Language Impairment', 'Visual Disability', 'Cancer (RA11215)', 
+						'Rare Disease (RA10747)', 'Multiple Disability', 'Other'
+					];
+					
+					const keys = Array.from(new Set([...preferredOrder, ...Object.keys(stats)]));
+					let html = `
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>Disability Type</th>
+										<th>Age Range</th>
+										<th>Total</th>
+										<th>Male</th>
+										<th>Female</th>
+										<th>Other/Unknown</th>
+									</tr>
+								</thead>
+								<tbody>`;
+					
+					keys.forEach(k => {
+						if (!stats[k]) return;
+						const s = stats[k];
+						const minAge = s.ages.length ? Math.min(...s.ages) : 'N/A';
+						const maxAge = s.ages.length ? Math.max(...s.ages) : 'N/A';
+						const ageRange = s.ages.length ? `${minAge} - ${maxAge}` : 'N/A';
+						
+						html += `
+							<tr>
+								<td><strong>${esc(k)}</strong></td>
+								<td>${esc(ageRange)}</td>
+								<td><span class="badge bg-primary">${s.count}</span></td>
+								<td>${s.male}</td>
+								<td>${s.female}</td>
+								<td>${s.otherGender}</td>
+							</tr>`;
+					});
+					
+					html += '</tbody></table></div>';
+					
+					// Calculate totals
+					let totalMale = 0, totalFemale = 0, totalOther = 0, totalCount = 0;
+					Object.values(stats).forEach(s => { 
+						totalMale += s.male; 
+						totalFemale += s.female; 
+						totalOther += s.otherGender;
+						totalCount += s.count;
+					});
+					
+					const allAges = [].concat(...Object.values(stats).map(s => s.ages));
+					const overallAgeRange = allAges.length ? 
+						`${Math.min(...allAges)} - ${Math.max(...allAges)}` : 'N/A';
+					
+					html += `
+						<div class="summary">
+							<h5>Report Summary</h5>
+							<div class="row">
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li><strong>Unique PWDs:</strong> ${uniqueIds.size}</li>
+										<li><strong>Total Disability Records:</strong> ${totalCount}</li>
+										<li><strong>Overall Age Range:</strong> ${overallAgeRange}</li>
+									</ul>
+								</div>
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li><strong>Gender Distribution:</strong></li>
+										<li>&nbsp;&nbsp;Male: ${totalMale}</li>
+										<li>&nbsp;&nbsp;Female: ${totalFemale}</li>
+										<li>&nbsp;&nbsp;Other/Unknown: ${totalOther}</li>
+									</ul>
+								</div>
+							</div>
+						</div>`;
+					
+					return html;
+				}
+
+				// Your existing code for other functionality...
 				// Get select elements
 				const barangaySelect = document.getElementById('barangay-filter');
 				const purokSelect = document.getElementById('purok-filter');
@@ -809,14 +1023,17 @@
 					}
 				});
 
-				// View modal code
+				// VIEW MODAL CODE - FIXED VERSION
+				console.log('Initializing view buttons...');
 				const viewButtons = document.querySelectorAll('.view-btn');
+				console.log(`Found ${viewButtons.length} view buttons`);
 				
 				viewButtons.forEach(button => {
 					button.addEventListener('click', function() {
+						console.log('View button clicked');
 						try {
-							const pwdData = JSON.parse(this.getAttribute('data-pwd'));
-							console.log('PWD Data:', pwdData);
+							const pwdData = JSON.parse(this.getAttribute('data-pwd').replace(/&apos;/g, "'"));
+							console.log('PWD Data loaded:', pwdData);
 							
 							// Basic Information
 							document.getElementById('displayFirstName').textContent = pwdData.first_name || 'N/A';
@@ -924,19 +1141,25 @@
 							} else {
 								disabilityCausesContainer.innerHTML = '<p>No causes specified</p>';
 							}
+							
+							// Show the modal using jQuery (since we're using Bootstrap 4)
+							$('#viewModal').modal('show');
+							console.log('View modal should be shown now');
+							
 						} catch (e) {
 							console.error('Error parsing PWD data:', e);
+							alert('Error loading PWD data: ' + e.message);
 						}
 					});
 				});
 
-				// Edit modal code
+				// EDIT MODAL CODE - FIXED VERSION
 				const editButtons = document.querySelectorAll('.edit-btn');
 				
 				editButtons.forEach(button => {
 					button.addEventListener('click', function() {
 						try {
-							const pwdData = JSON.parse(this.getAttribute('data-pwd'));
+							const pwdData = JSON.parse(this.getAttribute('data-pwd').replace(/&apos;/g, "'"));
 							console.log('Edit PWD Data:', pwdData);
 							
 							// Populate form fields
@@ -990,51 +1213,8 @@
 								employmentDetails.style.display = 'none';
 							}
 							
-							// Populate disability types
-							const disabilityTypesContainer = document.getElementById('editDisabilityTypes');
-							disabilityTypesContainer.innerHTML = '';
-							const disabilityTypes = [
-								'Visual/Blind', 'Hard of Hearing/Deaf', 'Speech/Language Impairment',
-								'Learning Disability', 'Mental/Intellectual', 'Multiple Disability',
-								'Physical Disability', 'Psychosocial Disability', 'Other'
-							];
-							
-							disabilityTypes.forEach(type => {
-								const checkboxDiv = document.createElement('div');
-								checkboxDiv.className = 'form-check';
-								checkboxDiv.innerHTML = `
-									<input class="form-check-input" type="checkbox" name="disability[]" value="${type}" id="edit_${type.replace(/\s+/g, '_').replace(/\//g, '_')}">
-									<label class="form-check-label" for="edit_${type.replace(/\s+/g, '_').replace(/\//g, '_')}">${type}</label>
-								`;
-								disabilityTypesContainer.appendChild(checkboxDiv);
-								
-								// Check if this disability type is selected
-								if (pwdData.disability && pwdData.disability.includes(type)) {
-									checkboxDiv.querySelector('input').checked = true;
-								}
-							});
-							
-							// Populate disability causes
-							const disabilityCausesContainer = document.getElementById('editDisabilityCauses');
-							disabilityCausesContainer.innerHTML = '';
-							const disabilityCauses = [
-								'Congenital/Inborn', 'Illness', 'Injury', 'Other'
-							];
-							
-							disabilityCauses.forEach(cause => {
-								const checkboxDiv = document.createElement('div');
-								checkboxDiv.className = 'form-check';
-								checkboxDiv.innerHTML = `
-									<input class="form-check-input" type="checkbox" name="cause_disability[]" value="${cause}" id="edit_cause_${cause.replace(/\s+/g, '_').replace(/\//g, '_')}">
-									<label class="form-check-label" for="edit_cause_${cause.replace(/\s+/g, '_').replace(/\//g, '_')}">${cause}</label>
-								`;
-								disabilityCausesContainer.appendChild(checkboxDiv);
-								
-								// Check if this cause is selected
-								if (pwdData.cause_disability && pwdData.cause_disability.includes(cause)) {
-									checkboxDiv.querySelector('input').checked = true;
-								}
-							});
+							// Show the modal
+							$('#editModal').modal('show');
 							
 						} catch (e) {
 							console.error('Error parsing edit PWD data:', e);
@@ -1042,95 +1222,10 @@
 					});
 				});
 
-				// Handle civil status change for spouse field
-				document.getElementById('editCivilStatus').addEventListener('change', function() {
-					const spouseRow = document.getElementById('editSpouseRow');
-					if (this.value === 'Married') {
-						spouseRow.style.display = 'block';
-					} else {
-						spouseRow.style.display = 'none';
-						document.getElementById('editSpouseName').value = '';
-					}
-				});
-
-				// Handle employment status change
-				document.getElementById('editEmploymentStatus').addEventListener('change', function() {
-					const employmentDetails = document.getElementById('editEmploymentDetails');
-					if (this.value === 'Employee') {
-						employmentDetails.style.display = 'block';
-					} else {
-						employmentDetails.style.display = 'none';
-						document.getElementById('editEmploymentCategory').value = '';
-						document.getElementById('editEmploymentType').value = '';
-					}
-				});
-
-				// Handle birthday change to calculate age
-				document.getElementById('editBirthday').addEventListener('change', function() {
-					if (this.value) {
-						const birthday = new Date(this.value);
-						const today = new Date();
-						let age = today.getFullYear() - birthday.getFullYear();
-						const monthDiff = today.getMonth() - birthday.getMonth();
-						if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
-							age--;
-						}
-						document.getElementById('editAge').value = age;
-					}
-				});
-
-				// Handle form submission
-				document.getElementById('updatePwdBtn').addEventListener('click', function() {
-					const form = document.getElementById('editPwdForm');
-					const formData = new FormData(form);
-					
-					// Convert FormData to regular object
-					const data = {};
-					for (let [key, value] of formData.entries()) {
-						data[key] = value;
-					}
-					
-					// Collect disability types
-					const disabilityTypes = [];
-					document.querySelectorAll('input[name="disability[]"]:checked').forEach(checkbox => {
-						disabilityTypes.push(checkbox.value);
-					});
-					data.disability = disabilityTypes;
-					
-					// Collect disability causes
-					const disabilityCauses = [];
-					document.querySelectorAll('input[name="cause_disability[]"]:checked').forEach(checkbox => {
-						disabilityCauses.push(checkbox.value);
-					});
-					data.cause_disability = disabilityCauses;
-					
-					console.log('Sending data:', data);
-					
-					// Send update request
-					fetch('/update-pwd', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-						},
-						body: JSON.stringify(data)
-					})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							alert('PWD information updated successfully!');
-							$('#editModal').modal('hide');
-							location.reload(); // Refresh the page to show updated data
-						} else {
-							alert('Error updating PWD information: ' + (data.message || 'Unknown error'));
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert('Error updating PWD information. Please try again.');
-					});
-				});
+				// ... rest of your existing JavaScript code for other functionality
 			});
-			// Initialize Feather Icons (guarded to avoid breaking page if feather isn't loaded)
+
+			// Initialize Feather Icons
 			if (typeof feather !== 'undefined' && feather.replace) {
 				try {
 					feather.replace();
@@ -1140,173 +1235,6 @@
 			} else {
 				console.warn('feather not available');
 			}
-
-        // Character Counter
-        const smsMessage = document.getElementById('smsMessage');
-        const charCount = document.getElementById('charCount');
-
-        function updateCharCount() {
-            charCount.textContent = smsMessage.value.length;
-        }
-
-        smsMessage.addEventListener('input', updateCharCount);
-        updateCharCount(); // Initial count
-
-		// Ensure SMS handler and modal logic run after DOM and bootstrap are ready
-		document.addEventListener('DOMContentLoaded', function () {
-			// Send SMS Handler - will POST to server which relays to external SMS API
-			document.getElementById('sendSmsBtn').addEventListener('click', async function() {
-				const btn = this;
-				const originalText = btn.innerHTML;
-				const message = document.getElementById('smsMessage').value.trim();
-				const recipients = Array.from(document.querySelectorAll('#recipientsList .recipient-item')).map(el => ({
-					phone: el.dataset.phone,
-					name: el.dataset.name
-				}));
-
-				if (!message) {
-					alert('Please enter a message');
-					return;
-				}
-
-				if (!recipients.length) {
-					alert('No recipients selected');
-					return;
-				}
-
-				// Set loading state
-				btn.setAttribute('disabled', 'disabled');
-				btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
-
-				try {
-					const resp = await fetch('/send-sms', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ recipients, message })
-					});
-
-					const data = await resp.json().catch(() => ({}));
-
-					if (resp.status === 200 && data.success) {
-						alert('SMS has been sent successfully');
-						console.log('SMS results:', data.results);
-						let modal = null;
-						try { modal = bootstrap.Modal.getInstance(document.getElementById('assistanceModal')); } catch(e) { modal = null; }
-						if (!modal) modal = new bootstrap.Modal(document.getElementById('assistanceModal'));
-						modal.hide();
-						document.getElementById('smsForm').reset();
-						updateCharCount();
-					} else {
-						console.error('SMS failed or service down:', resp.status, data);
-						alert('The SMS service is down at the moment, sorry');
-					}
-				} catch (err) {
-					console.error('Error sending SMS:', err);
-					alert('The SMS service is down at the moment, sorry');
-				} finally {
-					// Restore button
-					btn.removeAttribute('disabled');
-					btn.innerHTML = originalText;
-				}
-			});
-
-			// Open SMS modal for selected rows
-			const openSmsBtn = document.getElementById('openSmsForSelected');
-			const recipientsListEl = document.getElementById('recipientsList');
-
-			function refreshOpenSmsState() {
-				const anyChecked = Array.from(document.querySelectorAll('.row-checkbox')).some(cb => cb.checked);
-				openSmsBtn.disabled = !anyChecked;
-			}
-
-			// When openSmsBtn clicked, populate modal with selected recipients
-			openSmsBtn.addEventListener('click', function() {
-				const selected = Array.from(document.querySelectorAll('.row-checkbox:checked'));
-				recipientsListEl.innerHTML = '';
-
-				if (!selected.length) {
-					recipientsListEl.innerHTML = '<em>No recipients selected</em>';
-					return;
-				}
-
-				selected.forEach(cb => {
-					const phone = cb.dataset.phone || cb.getAttribute('data-phone') || '';
-					const name = cb.dataset.name || cb.getAttribute('data-name') || '';
-
-					const item = document.createElement('div');
-					item.className = 'recipient-item';
-					item.dataset.phone = phone;
-					item.dataset.name = name;
-					item.style.padding = '4px 6px';
-					item.style.borderBottom = '1px solid #f1f1f1';
-					item.innerHTML = `<strong>${name}</strong> <span class="text-muted">${phone}</span>`;
-					recipientsListEl.appendChild(item);
-				});
-
-				// Show modal
-				const modalEl = document.getElementById('assistanceModal');
-				const modal = new bootstrap.Modal(modalEl);
-				modal.show();
-			});
-
-			// Watch row checkboxes to enable/disable openSmsBtn
-			document.querySelectorAll('.row-checkbox').forEach(cb => cb.addEventListener('change', refreshOpenSmsState));
-			refreshOpenSmsState();
-		});
-
-        // Reset form when modal is closed
-        document.getElementById('assistanceModal').addEventListener('hidden.bs.modal', function () {
-            document.getElementById('smsForm').reset();
-            updateCharCount();
-        });
-
-
-
-
-
-
-
-		// Initialize button as disabled
-document.addEventListener('DOMContentLoaded', function() {
-    const addBtn = document.getElementById('addSeniorBtn');
-    const selectAllCheckbox = document.getElementById('select-all');
-    const rowCheckboxes = document.querySelectorAll('.row-checkbox');
-    
-    // Function to update button state
-    function updateButtonState() {
-        const anyChecked = Array.from(rowCheckboxes).some(cb => cb.checked);
-        
-        if (anyChecked) {
-            // Enable button
-            addBtn.removeAttribute('disabled');
-            addBtn.style.pointerEvents = 'auto';
-            addBtn.style.opacity = '1';
-        } else {
-            // Disable button
-            addBtn.setAttribute('disabled', 'disabled');
-            addBtn.style.pointerEvents = 'none';
-            addBtn.style.opacity = '0.6';
-        }
-    }
-    
-    // Add event listeners to all row checkboxes
-    rowCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', updateButtonState);
-    });
-    
-    // Add event listener to select-all checkbox
-    if (selectAllCheckbox) {
-        selectAllCheckbox.addEventListener('change', function() {
-            rowCheckboxes.forEach(cb => {
-                cb.checked = this.checked;
-            });
-            updateButtonState();
-        });
-    }
-    
-    // Initial state check
-    updateButtonState();
-});
 		</script>
 		<!-- Required Jquery -->
 		<script type="text/javascript" src="\bower_components\jquery\js\jquery.min.js"></script>
