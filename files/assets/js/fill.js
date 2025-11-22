@@ -289,7 +289,7 @@ async function submitForm() {
       other_govt_id: formData.get('other_govt_id'),
       service_business_employment: formData.get('service'),
       current_pension: formData.get('pension'),
-      capability_to_travel: formData.get('education_level') === 'Yes' ? 'Yes' : 'No',
+      capability_to_travel: formData.get('capability_to_travel') === 'Yes' ? 'Yes' : 'No',
       religion: formData.get('place_of_birth') // Note: This field is used for religion in your form
     },
     family_composition: {
@@ -316,10 +316,12 @@ async function submitForm() {
       })).filter(child => child.full_name)
     },
     education_hr_profile: {
-      educational_attainment: formData.get('education_level'),
-      skills: Array.from(document.querySelectorAll('input[name="skills[]"]:checked')).map(el => el.value),
-      skill_other_text: document.getElementById('skill-other-text').value || undefined
-    }
+      educational_attainment: formData.get('educational_attainment'),
+      skills: Array.from(document.querySelectorAll('#educationalAttainment input[name="skills[]"]:checked')).map(el => el.value),
+      skill_other_text: document.getElementById('skill-other-text')?.value || undefined
+    },
+    community_service: Array.from(document.querySelectorAll('#service input[name="community_service[]"]:checked')).map(el => el.value),
+    community_service_other_text: document.getElementById('community-service-other-text')?.value || undefined
   };
 
   // Process contacts

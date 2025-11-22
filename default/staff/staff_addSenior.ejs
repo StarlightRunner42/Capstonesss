@@ -104,8 +104,8 @@
 							<input type="text" id="service" name="service" placeholder="Service">
 						</div>
 						<div class="form-group">
-							<label for="education_level">Capability to Travel</label>
-							<select id="education_level" name="education_level" required>
+							<label for="capability_to_travel">Capability to Travel</label>
+							<select id="capability_to_travel" name="capability_to_travel" required>
 								<option value="">-- Select One --</option>
 								<option value="Yes">Yes</option>
 								<option value="No">No</option>
@@ -303,8 +303,8 @@
 				<fieldset id="educationalAttainment">
 					<legend>Educational Attainment</legend>
 					<div class="form-group">
-						<label for="education_level">Select Educational Level:</label>
-						<select id="education_level" name="education_level" required>
+						<label for="educational_attainment">Select Educational Level:</label>
+						<select id="educational_attainment" name="educational_attainment" required>
 							<option value="">-- Select One --</option>
 							<option value="Elementary Level">Elementary Level</option>
 							<option value="Elementary Graduate">Elementary Graduate</option>
@@ -424,62 +424,62 @@
     <div class="skills-grid">
       <div class="skills-column">
         <div class="skill-item">
-          <input type="checkbox" id="skill-medical" name="skills[]" value="Medical">
-          <label for="skill-medical">Medical</label>
+          <input type="checkbox" id="service-medical" name="community_service[]" value="Medical">
+          <label for="service-medical">Medical</label>
         </div>
         <div class="skill-item">
-          <input type="checkbox" id="skill-community-leader" name="skills[]" value="Community / Organization Leader">
-          <label for="skill-community-leader">Community / Organization Leader</label>
+          <input type="checkbox" id="service-community-leader" name="community_service[]" value="Community / Organization Leader">
+          <label for="service-community-leader">Community / Organization Leader</label>
         </div>
         <div class="skill-item">
-          <input type="checkbox" id="skill-neighborhood" name="skills[]" value="Neighborhood Support Services">
-          <label for="skill-neighborhood">Neighborhood Support Services</label>
+          <input type="checkbox" id="service-neighborhood" name="community_service[]" value="Neighborhood Support Services">
+          <label for="service-neighborhood">Neighborhood Support Services</label>
         </div>
         <div class="skill-item">
-          <input type="checkbox" id="skill-counseling" name="skills[]" value="Counseling / Referral">
-          <label for="skill-counseling">Counseling / Referral</label>
-        </div>
-      </div>
-      
-      <div class="skills-column">
-        <div class="skill-item">
-          <input type="checkbox" id="skill-resource" name="skills[]" value="Resource Volunteer">
-          <label for="skill-resource">Resource Volunteer</label>
-        </div>
-        <div class="skill-item">
-          <input type="checkbox" id="skill-dental" name="skills[]" value="Dental">
-          <label for="skill-dental">Dental</label>
-        </div>
-        <div class="skill-item">
-          <input type="checkbox" id="skill-legal" name="skills[]" value="Legal Services">
-          <label for="skill-legal">Legal Services</label>
-        </div>
-        <div class="skill-item">
-          <input type="checkbox" id="skill-sponsorship" name="skills[]" value="Sponsorship">
-          <label for="skill-sponsorship">Sponsorship</label>
+          <input type="checkbox" id="service-counseling" name="community_service[]" value="Counseling / Referral">
+          <label for="service-counseling">Counseling / Referral</label>
         </div>
       </div>
       
       <div class="skills-column">
         <div class="skill-item">
-          <input type="checkbox" id="skill-beautification" name="skills[]" value="Community Beautification">
-          <label for="skill-beautification">Community Beautification</label>
+          <input type="checkbox" id="service-resource" name="community_service[]" value="Resource Volunteer">
+          <label for="service-resource">Resource Volunteer</label>
         </div>
         <div class="skill-item">
-          <input type="checkbox" id="skill-visits" name="skills[]" value="Friendly Visits">
-          <label for="skill-visits">Friendly Visits</label>
+          <input type="checkbox" id="service-dental" name="community_service[]" value="Dental">
+          <label for="service-dental">Dental</label>
         </div>
         <div class="skill-item">
-          <input type="checkbox" id="skill-religious" name="skills[]" value="Religious">
-          <label for="skill-religious">Religious</label>
+          <input type="checkbox" id="service-legal" name="community_service[]" value="Legal Services">
+          <label for="service-legal">Legal Services</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="service-sponsorship" name="community_service[]" value="Sponsorship">
+          <label for="service-sponsorship">Sponsorship</label>
+        </div>
+      </div>
+      
+      <div class="skills-column">
+        <div class="skill-item">
+          <input type="checkbox" id="service-beautification" name="community_service[]" value="Community Beautification">
+          <label for="service-beautification">Community Beautification</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="service-visits" name="community_service[]" value="Friendly Visits">
+          <label for="service-visits">Friendly Visits</label>
+        </div>
+        <div class="skill-item">
+          <input type="checkbox" id="service-religious" name="community_service[]" value="Religious">
+          <label for="service-religious">Religious</label>
         </div>
       </div>
     </div>
 						
 						<div class="skill-item">
-						  <input type="checkbox" id="skill-other" name="skills[]" value="Other">
-						  <label for="skill-other">Others, specify:</label>
-						  <input type="text" id="skill-other-text" name="skill_other_text" class="other-input">
+						  <input type="checkbox" id="service-other" name="community_service[]" value="Other">
+						  <label for="service-other">Others, specify:</label>
+						  <input type="text" id="community-service-other-text" name="community_service_other_text" class="other-input">
 						</div>
 					  </div>
 				</fieldset>

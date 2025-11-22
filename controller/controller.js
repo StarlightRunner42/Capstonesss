@@ -223,7 +223,11 @@ exports.logout = (req, res) => {
             ? body.education_hr_profile.skills.filter(Boolean)
             : [],
           skill_other_text: skillOtherText || undefined
-        }
+        },
+        community_service: Array.isArray(body.community_service)
+          ? body.community_service.filter(Boolean)
+          : [],
+        community_service_other_text: body.community_service_other_text || undefined
       };
   
       const newResident = new SeniorCitizen(residentData);
