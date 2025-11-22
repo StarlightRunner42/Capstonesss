@@ -1222,7 +1222,203 @@
 					});
 				});
 
-				// ... rest of your existing JavaScript code for other functionality
+				// SMS Functionality
+				// Character counter for SMS message
+				function updateCharCount() {
+					const smsMessage = document.getElementById('smsMessage');
+					const charCount = document.getElementById('charCount');
+					if (smsMessage && charCount) {
+						const count = smsMessage.value.length;
+						charCount.textContent = count;
+						if (count > 160) {
+							charCount.style.color = 'red';
+						} else {
+							charCount.style.color = '';
+						}
+					}
+				}
+
+				const smsMessage = document.getElementById('smsMessage');
+				if (smsMessage) {
+					smsMessage.addEventListener('input', updateCharCount);
+					updateCharCount(); // Initial count
+				}
+
+				// Attach SMS handler and modal logic
+				(function() {
+					const sendBtn = document.getElementById('sendSmsBtn');
+					const recipientsListEl = document.getElementById('recipientsList');
+					const openSmsBtn = document.getElementById('openSmsForSelected');
+
+					if (sendBtn) {
+						sendBtn.addEventListener('click', async function() {
+							const btn = this;
+							
+							// Prevent multiple simultaneous sends
+							if (btn.dataset.sending === '1') return;
+							btn.dataset.sending = '1';
+
+							const originalText = btn.innerHTML;
+							const messageEl = document.getElementById('smsMessage');
+							const message = messageEl ? messageEl.value.trim() : '';
+							const recipients = recipientsListEl ? Array.from(recipientsListEl.querySelectorAll('.recipient-item')).map(el => ({
+								phone: el.dataset.phone,
+								name: el.dataset.name
+							})) : [];
+
+							// Validation
+							if (!message) {
+								delete btn.dataset.sending;
+								alert('Please enter a message');
+								return;
+							}
+							if (!recipients.length) {
+								delete btn.dataset.sending;
+								alert('No recipients selected');
+								return;
+							}
+
+							// UI feedback
+							btn.setAttribute('disabled', 'disabled');
+							btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...';
+
+							try {
+								const resp = await fetch('/send-sms', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify({ recipients, message })
+								});
+
+								// Check HTTP status first
+								if (!resp.ok) {
+									throw new Error(`HTTP error! status: ${resp.status}`);
+								}
+
+								// Try to parse JSON response
+								let data = null;
+								try {
+									data = await resp.json();
+								} catch (jsonErr) {
+									console.warn('Invalid JSON response from server:', jsonErr);
+									// Even if JSON parsing fails, if we got 200, consider it success
+									alert('SMS has been sent successfully!');
+									closeModalAndReset();
+									return;
+								}
+
+								// Check for success in response data
+								if (data && data.success === true) {
+									alert('SMS has been sent successfully!');
+									console.log('SMS results:', data.results);
+									closeModalAndReset();
+								} else {
+									// Server returned success: false or no success property
+									const errorMsg = data && data.error ? data.error : 'SMS sending failed';
+									console.error('SMS service reported failure:', errorMsg);
+									alert('Failed to send SMS: ' + errorMsg);
+								}
+
+							} catch (err) {
+								console.error('Error sending SMS:', err);
+								// Only show service down message for network errors or server errors
+								if (err.message.includes('HTTP error') || err.name === 'TypeError') {
+									alert('The SMS service is down at the moment, sorry. Please try again later.');
+								} else {
+									alert('An unexpected error occurred: ' + err.message);
+								}
+							} finally {
+								// Always clean up
+								delete btn.dataset.sending;
+								btn.removeAttribute('disabled');
+								btn.innerHTML = originalText;
+							}
+						});
+					}
+
+					function closeModalAndReset() {
+						// Close modal
+						const modalEl = document.getElementById('assistanceModal');
+						if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+							const modal = bootstrap.Modal.getInstance(modalEl);
+							if (modal) modal.hide();
+						} else if (typeof $ !== 'undefined' && $.fn.modal) {
+							$('#assistanceModal').modal('hide');
+						} else {
+							modalEl.style.display = 'none';
+							modalEl.classList.remove('show');
+						}
+
+						// Reset form
+						const form = document.getElementById('smsForm');
+						if (form) form.reset();
+						updateCharCount();
+					}
+
+					// Open SMS modal for selected rows
+					if (openSmsBtn && recipientsListEl) {
+						function refreshOpenSmsState() {
+							const anyChecked = Array.from(document.querySelectorAll('.row-checkbox')).some(cb => cb.checked);
+							openSmsBtn.disabled = !anyChecked;
+						}
+
+						openSmsBtn.addEventListener('click', function() {
+							const selected = Array.from(document.querySelectorAll('.row-checkbox:checked'));
+							recipientsListEl.innerHTML = '';
+
+							if (!selected.length) {
+								recipientsListEl.innerHTML = '<em>No recipients selected</em>';
+								return;
+							}
+
+							selected.forEach(cb => {
+								const phone = cb.dataset.phone || cb.getAttribute('data-phone') || '';
+								const name = cb.dataset.name || cb.getAttribute('data-name') || '';
+
+								// Only add if phone number exists
+								if (phone) {
+									const item = document.createElement('div');
+									item.className = 'recipient-item';
+									item.dataset.phone = phone;
+									item.dataset.name = name;
+									item.style.padding = '4px 6px';
+									item.style.borderBottom = '1px solid #f1f1f1';
+									item.innerHTML = `<strong>${name}</strong> <span class="text-muted">${phone}</span>`;
+									recipientsListEl.appendChild(item);
+								}
+							});
+
+							// Show modal
+							const modalEl = document.getElementById('assistanceModal');
+							if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+								const modal = new bootstrap.Modal(modalEl);
+								modal.show();
+							} else if (typeof $ !== 'undefined' && $.fn.modal) {
+								$('#assistanceModal').modal('show');
+							} else {
+								modalEl.style.display = 'block';
+								modalEl.classList.add('show');
+								document.body.classList.add('modal-open');
+								const backdrop = document.createElement('div');
+								backdrop.className = 'modal-backdrop fade show';
+								document.body.appendChild(backdrop);
+							}
+						});
+
+						// Watch row checkboxes to enable/disable openSmsBtn
+						document.querySelectorAll('.row-checkbox').forEach(cb => cb.addEventListener('change', refreshOpenSmsState));
+						refreshOpenSmsState();
+					}
+				})();
+
+				// Reset form when modal is closed
+				const assistanceModalEl = document.getElementById('assistanceModal');
+				if (assistanceModalEl) {
+					assistanceModalEl.addEventListener('hidden.bs.modal', function () {
+						const form = document.getElementById('smsForm');
+						if (form) form.reset();
+						updateCharCount();
+					});
+				}
 			});
 
 			// Initialize Feather Icons
