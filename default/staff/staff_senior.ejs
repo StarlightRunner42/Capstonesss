@@ -285,7 +285,9 @@
                                                             <h5 class="modal-title" id="assistanceModalLabel">
                                                                 <i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS Assistance
                                                             </h5>
-                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form id="smsForm">
@@ -325,7 +327,7 @@
                                                             </form>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
                                                                 <i data-feather="x" style="width: 16px; height: 16px;"></i> Cancel
                                                             </button>
                                                             <button type="button" class="btn btn-primary btn-send" id="sendSmsBtn">
