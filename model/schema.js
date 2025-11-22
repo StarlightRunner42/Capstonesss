@@ -148,10 +148,10 @@ const pwdRegistrationSchema = new mongoose.Schema({
   motherFirstName: { type: String },
   motherMiddleName: { type: String },
 
-  sss_id: { type: String, required: true },
-  gsis_sss_no: { type: String, required: true },
-  psn_no: { type: String, required: true },
-  philhealth_no: { type: String, required: true },
+  sss_id: { type: String},
+  gsis_sss_no: { type: String},
+  psn_no: { type: String},
+  philhealth_no: { type: String},
 
   education_level: {
     type: String,
