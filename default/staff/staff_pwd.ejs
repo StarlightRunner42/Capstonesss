@@ -514,6 +514,8 @@
 																									<option value="">Select Gender</option>
 																									<option value="Male">Male</option>
 																									<option value="Female">Female</option>
+																									<option value="Other">Other</option>
+																									<option value="Prefer not to say">Prefer not to say</option>
 																								</select>
 																							</div>
 																						</div>
@@ -523,10 +525,8 @@
 																								<select class="form-control" id="editCivilStatus" name="civil_status" required>
 																									<option value="">Select Status</option>
 																									<option value="Single">Single</option>
+																									<option value="Single but Head of the Family">Single but Head of the Family</option>
 																									<option value="Married">Married</option>
-																									<option value="Widowed">Widowed</option>
-																									<option value="Separated">Separated</option>
-																									<option value="Divorced">Divorced</option>
 																								</select>
 																							</div>
 																						</div>
@@ -670,11 +670,9 @@
 																									<option value="">Select Employment Status</option>
 																									<option value="Employee">Employee</option>
 																									<option value="Unemployed">Unemployed</option>
-																									<option value="Self-Employed">Self-Employed</option>
-																									<option value="Retired">Retired</option>
-																									<option value="Student">Student</option>
+																									<option value="Self-employed">Self-employed</option>
 																								</select>
-																			</div>
+																							</div>
 																						</div>
 																					</div>
 																					<div class="row" id="editEmploymentDetails" style="display: none;">
@@ -685,7 +683,6 @@
 																									<option value="">Select Category</option>
 																									<option value="Government">Government</option>
 																									<option value="Private">Private</option>
-																									<option value="NGO">NGO</option>
 																								</select>
 																							</div>
 																						</div>
@@ -694,9 +691,10 @@
 																								<label for="editEmploymentType">Employment Type</label>
 																								<select class="form-control" id="editEmploymentType" name="employment_type">
 																									<option value="">Select Type</option>
-																									<option value="Permanent">Permanent</option>
-																									<option value="Contractual">Contractual</option>
+																									<option value="Permanent/Regular">Permanent/Regular</option>
+																									<option value="Seasonal">Seasonal</option>
 																									<option value="Casual">Casual</option>
+																									<option value="Emergency">Emergency</option>
 																								</select>
 																							</div>
 																						</div>
@@ -751,6 +749,7 @@
 					<div id="styleSelector"></div>
 				</div>
 			</div>
+		</div>
 		</div>
 		</div>
 		</div>
@@ -1207,21 +1206,156 @@
 				// EDIT MODAL CODE - FIXED VERSION
 				const editButtons = document.querySelectorAll('.edit-btn');
 				
+				// Define disability types and causes for checkbox generation
+				const disabilityTypes = [
+					'Deaf or Hard of Hearing',
+					'Intellectual Disability',
+					'Learning Disability',
+					'Mental Disability',
+					'Physical Disability (Orthopedic)',
+					'Psychosocial Disability',
+					'Speech and Language Impairment',
+					'Visual Disability',
+					'Cancer (RA11215)',
+					'Rare Disease (RA10747)',
+					'Other'
+				];
+
+				const disabilityCauses = [
+					'Congenital / Inborn',
+					'Autism',
+					'ADHD',
+					'Cerebral Palsy',
+					'Down Syndrome',
+					'Acquired',
+					'Chronic Illness',
+					'Injury',
+					'Other'
+				];
+
+				// Function to populate disability checkboxes
+				function populateDisabilityCheckboxes(containerId, options, selectedValues, otherTextValue) {
+					const container = document.getElementById(containerId);
+					if (!container) return;
+					
+					container.innerHTML = '';
+					
+					options.forEach(option => {
+						const div = document.createElement('div');
+						div.className = 'form-check mb-2';
+						
+						const checkbox = document.createElement('input');
+						checkbox.type = 'checkbox';
+						checkbox.className = 'form-check-input';
+						checkbox.id = `${containerId}-${option.replace(/\s+/g, '-').toLowerCase()}`;
+						checkbox.value = option;
+						checkbox.name = containerId === 'editDisabilityTypes' ? 'disability[]' : 'cause_disability[]';
+						
+						// Check if this option is selected
+						if (selectedValues && Array.isArray(selectedValues) && selectedValues.includes(option)) {
+							checkbox.checked = true;
+						}
+						
+						const label = document.createElement('label');
+						label.className = 'form-check-label';
+						label.htmlFor = checkbox.id;
+						label.textContent = option;
+						
+						div.appendChild(checkbox);
+						div.appendChild(label);
+						
+						// Add text input for "Other" option
+						if (option === 'Other') {
+							const textInput = document.createElement('input');
+							textInput.type = 'text';
+							textInput.className = 'form-control mt-2';
+							textInput.placeholder = 'Please specify';
+							textInput.name = containerId === 'editDisabilityTypes' ? 'disability_other_text' : 'cause_other_text';
+							if (otherTextValue) {
+								textInput.value = otherTextValue;
+							}
+							div.appendChild(textInput);
+						}
+						
+						container.appendChild(div);
+					});
+				}
+
 				editButtons.forEach(button => {
 					button.addEventListener('click', function() {
 						try {
 							const pwdData = JSON.parse(this.getAttribute('data-pwd').replace(/&apos;/g, "'"));
 							console.log('Edit PWD Data:', pwdData);
 							
+							// Helper function to format date for input[type="date"]
+							function formatDateForInput(dateValue) {
+								if (!dateValue) return '';
+								let date;
+								if (dateValue instanceof Date) {
+									date = dateValue;
+								} else if (typeof dateValue === 'string') {
+									date = new Date(dateValue);
+								} else {
+									return '';
+								}
+								if (isNaN(date.getTime())) return '';
+								const year = date.getFullYear();
+								const month = String(date.getMonth() + 1).padStart(2, '0');
+								const day = String(date.getDate()).padStart(2, '0');
+								return `${year}-${month}-${day}`;
+							}
+							
+							// No normalization needed - use original values from database
+							
 							// Populate form fields
-							document.getElementById('editPwdId').value = pwdData._id || '';
+							document.getElementById('editPwdId').value = pwdData._id || pwdData.id || '';
 							document.getElementById('editFirstName').value = pwdData.first_name || '';
 							document.getElementById('editMiddleName').value = pwdData.middle_name || '';
 							document.getElementById('editLastName').value = pwdData.last_name || '';
-							document.getElementById('editBirthday').value = pwdData.birthday ? pwdData.birthday.split('T')[0] : '';
-							document.getElementById('editAge').value = pwdData.age || '';
-							document.getElementById('editGender').value = pwdData.gender || '';
-							document.getElementById('editCivilStatus').value = pwdData.civil_status || '';
+							
+							// Handle birthday - try multiple formats
+							const birthdayValue = formatDateForInput(pwdData.birthday);
+							document.getElementById('editBirthday').value = birthdayValue;
+							
+							// Calculate age if birthday is set but age is missing
+							if (birthdayValue && !pwdData.age) {
+								const birthday = new Date(pwdData.birthday);
+								const today = new Date();
+								let age = today.getFullYear() - birthday.getFullYear();
+								const monthDiff = today.getMonth() - birthday.getMonth();
+								if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+									age--;
+								}
+								document.getElementById('editAge').value = age;
+							} else {
+								document.getElementById('editAge').value = pwdData.age || '';
+							}
+							
+							// Gender - handle all possible values
+							const genderSelect = document.getElementById('editGender');
+							const genderValue = pwdData.gender || '';
+							genderSelect.value = genderValue;
+							// If value doesn't exist in options, add it
+							if (genderValue && !Array.from(genderSelect.options).some(opt => opt.value === genderValue)) {
+								const option = document.createElement('option');
+								option.value = genderValue;
+								option.textContent = genderValue;
+								genderSelect.appendChild(option);
+								genderSelect.value = genderValue;
+							}
+							
+							// Civil Status - use original value
+							const civilStatusSelect = document.getElementById('editCivilStatus');
+							civilStatusSelect.value = pwdData.civil_status || '';
+							// If value doesn't exist in options, add it
+							if (pwdData.civil_status && !Array.from(civilStatusSelect.options).some(opt => opt.value === pwdData.civil_status)) {
+								const option = document.createElement('option');
+								option.value = pwdData.civil_status;
+								option.textContent = pwdData.civil_status;
+								civilStatusSelect.appendChild(option);
+								civilStatusSelect.value = pwdData.civil_status;
+							}
+							
 							document.getElementById('editBarangay').value = pwdData.barangay || '';
 							document.getElementById('editPurok').value = pwdData.purok || '';
 							document.getElementById('editPlaceOfBirth').value = pwdData.place_of_birth || '';
@@ -1252,9 +1386,32 @@
 							
 							// Education and Employment
 							document.getElementById('editEducationLevel').value = pwdData.education_level || '';
-							document.getElementById('editEmploymentStatus').value = pwdData.employment_status || '';
+							
+							// Employment Status - use original value
+							const employmentStatusSelect = document.getElementById('editEmploymentStatus');
+							employmentStatusSelect.value = pwdData.employment_status || '';
+							// If value doesn't exist in options, add it
+							if (pwdData.employment_status && !Array.from(employmentStatusSelect.options).some(opt => opt.value === pwdData.employment_status)) {
+								const option = document.createElement('option');
+								option.value = pwdData.employment_status;
+								option.textContent = pwdData.employment_status;
+								employmentStatusSelect.appendChild(option);
+								employmentStatusSelect.value = pwdData.employment_status;
+							}
+							
 							document.getElementById('editEmploymentCategory').value = pwdData.employment_category || '';
-							document.getElementById('editEmploymentType').value = pwdData.employment_type || '';
+							
+							// Employment Type - use original value
+							const employmentTypeSelect = document.getElementById('editEmploymentType');
+							employmentTypeSelect.value = pwdData.employment_type || '';
+							// If value doesn't exist in options, add it
+							if (pwdData.employment_type && !Array.from(employmentTypeSelect.options).some(opt => opt.value === pwdData.employment_type)) {
+								const option = document.createElement('option');
+								option.value = pwdData.employment_type;
+								option.textContent = pwdData.employment_type;
+								employmentTypeSelect.appendChild(option);
+								employmentTypeSelect.value = pwdData.employment_type;
+							}
 							
 							// Show/hide employment details based on status
 							const employmentDetails = document.getElementById('editEmploymentDetails');
@@ -1264,15 +1421,226 @@
 								employmentDetails.style.display = 'none';
 							}
 							
+							// Populate disability checkboxes - handle different possible formats
+							let disabilityArray = [];
+							if (Array.isArray(pwdData.disability)) {
+								disabilityArray = pwdData.disability;
+							} else if (pwdData.disability) {
+								disabilityArray = [pwdData.disability];
+							}
+							
+							// Map old disability names to new ones if needed
+							const disabilityMapping = {
+								'Hard of Hearing/Deaf': 'Deaf or Hard of Hearing',
+								'Visual/Blind': 'Visual Disability',
+								'Speech/Language Impairment': 'Speech and Language Impairment',
+								'Learning Disability': 'Learning Disability',
+								'Mental/Intellectual': 'Intellectual Disability',
+								'Physical Disability': 'Physical Disability (Orthopedic)',
+								'Psychosocial Disability': 'Psychosocial Disability',
+								'Cancer': 'Cancer (RA11215)',
+								'Rare Disease': 'Rare Disease (RA10747)',
+								'Multiple Disability': 'Multiple Disability',
+								'Other': 'Other'
+							};
+							
+							disabilityArray = disabilityArray.map(d => disabilityMapping[d] || d);
+							
+							populateDisabilityCheckboxes('editDisabilityTypes', disabilityTypes, disabilityArray, pwdData.disability_other_text);
+							
+							// Populate disability causes checkboxes
+							let causeArray = [];
+							if (Array.isArray(pwdData.cause_disability)) {
+								causeArray = pwdData.cause_disability;
+							} else if (pwdData.cause_disability) {
+								causeArray = [pwdData.cause_disability];
+							}
+							
+							populateDisabilityCheckboxes('editDisabilityCauses', disabilityCauses, causeArray, pwdData.cause_other_text);
+							
 							// Show the modal
 							$('#editModal').modal('show');
 							
 						} catch (e) {
 							console.error('Error parsing edit PWD data:', e);
+							alert('Error loading PWD data: ' + e.message);
 						}
 					});
 				});
 
+				// UPDATE BUTTON EVENT HANDLER
+				const updatePwdBtn = document.getElementById('updatePwdBtn');
+				if (updatePwdBtn) {
+					updatePwdBtn.addEventListener('click', async function() {
+						const btn = this;
+						const form = document.getElementById('editPwdForm');
+						
+						if (!form) {
+							alert('Form not found');
+							return;
+						}
+						
+						// Validate form
+						if (!form.checkValidity()) {
+							form.reportValidity();
+							return;
+						}
+						
+						// Prevent multiple clicks
+						if (btn.dataset.updating === '1') return;
+						btn.dataset.updating = '1';
+						
+						const originalText = btn.innerHTML;
+						btn.disabled = true;
+						btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+						
+						try {
+							// Collect form data
+							const formData = new FormData(form);
+							const updateData = {
+								pwd_id: document.getElementById('editPwdId').value
+							};
+							
+							// Add all form fields
+							for (const [key, value] of formData.entries()) {
+								if (key === 'disability[]' || key === 'cause_disability[]') {
+									// Handle array fields
+									if (!updateData[key.replace('[]', '')]) {
+										updateData[key.replace('[]', '')] = [];
+									}
+									updateData[key.replace('[]', '')].push(value);
+								} else {
+									updateData[key] = value;
+								}
+							}
+							
+							// Get disability checkboxes
+							const disabilityCheckboxes = document.querySelectorAll('#editDisabilityTypes input[type="checkbox"]:checked');
+							updateData.disability = Array.from(disabilityCheckboxes).map(cb => cb.value);
+							
+							// Get disability other text
+							const disabilityOtherText = document.querySelector('#editDisabilityTypes input[name="disability_other_text"]');
+							if (disabilityOtherText && updateData.disability.includes('Other')) {
+								updateData.disability_other_text = disabilityOtherText.value || null;
+							} else {
+								updateData.disability_other_text = null;
+							}
+							
+							// Get cause checkboxes
+							const causeCheckboxes = document.querySelectorAll('#editDisabilityCauses input[type="checkbox"]:checked');
+							updateData.cause_disability = Array.from(causeCheckboxes).map(cb => cb.value);
+							
+							// Get cause other text
+							const causeOtherText = document.querySelector('#editDisabilityCauses input[name="cause_other_text"]');
+							if (causeOtherText && updateData.cause_disability.includes('Other')) {
+								updateData.cause_other_text = causeOtherText.value || null;
+							} else {
+								updateData.cause_other_text = null;
+							}
+							
+							// Calculate age from birthday if needed
+							if (updateData.birthday && !updateData.age) {
+								const birthday = new Date(updateData.birthday);
+								const today = new Date();
+								let age = today.getFullYear() - birthday.getFullYear();
+								const monthDiff = today.getMonth() - birthday.getMonth();
+								if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+									age--;
+								}
+								updateData.age = age;
+							}
+							
+							// Show/hide spouse name based on civil status
+							if (updateData.civil_status !== 'Married') {
+								updateData.spouse_name = null;
+							}
+							
+							// Show/hide employment details based on status
+							if (updateData.employment_status !== 'Employee') {
+								updateData.employment_category = null;
+								updateData.employment_type = null;
+							}
+							
+							// Send update request
+							const response = await fetch('/update-pwd', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify(updateData)
+							});
+							
+							const data = await response.json();
+							
+							if (data.success) {
+								alert('PWD record updated successfully!');
+								$('#editModal').modal('hide');
+								// Reload page to show updated data
+								window.location.reload();
+							} else {
+								alert('Error: ' + (data.message || 'Failed to update record'));
+								btn.disabled = false;
+								btn.innerHTML = originalText;
+								delete btn.dataset.updating;
+							}
+							
+						} catch (error) {
+							console.error('Error updating PWD:', error);
+							alert('An error occurred while updating the record. Please try again.');
+							btn.disabled = false;
+							btn.innerHTML = originalText;
+							delete btn.dataset.updating;
+						}
+					});
+				}
+
+				// Add dynamic behavior to edit modal
+				// Auto-calculate age when birthday changes
+				const editBirthdayInput = document.getElementById('editBirthday');
+				if (editBirthdayInput) {
+					editBirthdayInput.addEventListener('change', function() {
+						const birthday = new Date(this.value);
+						if (!isNaN(birthday.getTime())) {
+							const today = new Date();
+							let age = today.getFullYear() - birthday.getFullYear();
+							const monthDiff = today.getMonth() - birthday.getMonth();
+							if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+								age--;
+							}
+							document.getElementById('editAge').value = age;
+						}
+					});
+				}
+				
+				// Show/hide spouse field based on civil status
+				const editCivilStatusSelect = document.getElementById('editCivilStatus');
+				if (editCivilStatusSelect) {
+					editCivilStatusSelect.addEventListener('change', function() {
+						const spouseRow = document.getElementById('editSpouseRow');
+						if (this.value === 'Married') {
+							spouseRow.style.display = 'block';
+						} else {
+							spouseRow.style.display = 'none';
+							document.getElementById('editSpouseName').value = '';
+						}
+					});
+				}
+				
+				// Show/hide employment details based on employment status
+				const editEmploymentStatusSelect = document.getElementById('editEmploymentStatus');
+				if (editEmploymentStatusSelect) {
+					editEmploymentStatusSelect.addEventListener('change', function() {
+						const employmentDetails = document.getElementById('editEmploymentDetails');
+						if (this.value === 'Employee') {
+							employmentDetails.style.display = 'block';
+						} else {
+							employmentDetails.style.display = 'none';
+							document.getElementById('editEmploymentCategory').value = '';
+							document.getElementById('editEmploymentType').value = '';
+						}
+					});
+				}
+				
 				// Add cleanup handler for edit modal to remove backdrop
 				$('#editModal').on('hidden.bs.modal', function () {
 					// Remove any leftover backdrop elements
