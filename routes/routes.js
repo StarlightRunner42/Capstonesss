@@ -79,7 +79,13 @@ router.get('/index-staff', requireAuth, (req, res) => {
 
 router.post('/register-pwd', controller.registerPwd);
 router.post('/update-pwd', requireAuth, controller.updatePwd);
+router.post('/archive-pwd', requireAuth, controller.archivePwd);
+router.post('/unarchive-pwd', requireAuth, controller.unarchivePwd);
 router.post('/update-senior', requireAuth, controller.updateSenior);
+router.post('/archive-senior', requireAuth, controller.archiveSenior);
+router.post('/unarchive-senior', requireAuth, controller.unarchiveSenior);
+router.post('/archive-youth', requireAuth, controller.archiveYouth);
+router.post('/unarchive-youth', requireAuth, controller.unarchiveYouth);
 
 router.get('/add_senior', controller.renderAddSenior);
 

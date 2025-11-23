@@ -81,7 +81,13 @@ const SeniorCitizenSchema = new mongoose.Schema({
   },
 
   community_service: { type: [String] },
-  community_service_other_text: { type: String }
+  community_service_other_text: { type: String },
+
+  status: {
+    type: String,
+    enum: ['Active', 'Archived'],
+    default: 'Active'
+  }
 
 }, { timestamps: true });
 
@@ -194,7 +200,13 @@ const pwdRegistrationSchema = new mongoose.Schema({
 
   cause_disability: [String],
   cause_other_text: String,
-});
+
+  status: {
+    type: String,
+    enum: ['Active', 'Archived'],
+    default: 'Active'
+  }
+}, { timestamps: true });
 
 
 
@@ -339,6 +351,12 @@ const youthSchema = new mongoose.Schema({
   youth_age_group_other: {
     type: String,
     trim: true
+  },
+
+  status: {
+    type: String,
+    enum: ['Active', 'Archived'],
+    default: 'Active'
   },
 
   // Timestamps

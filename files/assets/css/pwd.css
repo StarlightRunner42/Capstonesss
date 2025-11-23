@@ -324,6 +324,25 @@ label {
   box-shadow: 0 8px 25px rgba(56, 161, 105, 0.3);
 }
 
+.action-archive {
+  background: linear-gradient(135deg, var(--warning-color), #f6ad55);
+  color: white;
+}
+
+.action-archive:hover {
+  background: linear-gradient(135deg, #dd6b20, var(--warning-color));
+  box-shadow: 0 8px 25px rgba(237, 137, 54, 0.3);
+}
+
+.action-archive[data-status="Archived"] {
+  background: linear-gradient(135deg, #4a5568, #718096);
+}
+
+.action-archive[data-status="Archived"]:hover {
+  background: linear-gradient(135deg, #2d3748, #4a5568);
+  box-shadow: 0 8px 25px rgba(74, 85, 104, 0.3);
+}
+
 .action svg {
   width: 18px;
   height: 18px;

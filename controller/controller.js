@@ -463,11 +463,268 @@ exports.updatePwd = async (req, res) => {
     });
   }
 };
+
+// Archive PWD record
+exports.archivePwd = async (req, res) => {
+  try {
+    const { pwd_id } = req.body;
+    
+    if (!pwd_id) {
+      return res.status(400).json({
+        message: 'PWD ID is required',
+        success: false
+      });
+    }
+
+    // Update the PWD record status to Archived
+    const archivedPwd = await PWD.findByIdAndUpdate(
+      pwd_id,
+      { status: 'Archived' },
+      { new: true, runValidators: true }
+    );
+
+    if (!archivedPwd) {
+      return res.status(404).json({
+        message: 'PWD record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'PWD record archived successfully',
+      data: archivedPwd
+    });
+
+  } catch (err) {
+    console.error('Archive PWD error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+// Unarchive PWD record
+exports.unarchivePwd = async (req, res) => {
+  try {
+    const { pwd_id } = req.body;
+    
+    if (!pwd_id) {
+      return res.status(400).json({
+        message: 'PWD ID is required',
+        success: false
+      });
+    }
+
+    // Update the PWD record status to Active
+    const unarchivedPwd = await PWD.findByIdAndUpdate(
+      pwd_id,
+      { status: 'Active' },
+      { new: true, runValidators: true }
+    );
+
+    if (!unarchivedPwd) {
+      return res.status(404).json({
+        message: 'PWD record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'PWD record unarchived successfully',
+      data: unarchivedPwd
+    });
+
+  } catch (err) {
+    console.error('Unarchive PWD error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+// Archive Senior Citizen record
+exports.archiveSenior = async (req, res) => {
+  try {
+    const { senior_id } = req.body;
+    
+    if (!senior_id) {
+      return res.status(400).json({
+        message: 'Senior Citizen ID is required',
+        success: false
+      });
+    }
+
+    // Update the Senior Citizen record status to Archived
+    const archivedSenior = await SeniorCitizen.findByIdAndUpdate(
+      senior_id,
+      { status: 'Archived' },
+      { new: true, runValidators: true }
+    );
+
+    if (!archivedSenior) {
+      return res.status(404).json({
+        message: 'Senior Citizen record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Senior Citizen record archived successfully',
+      data: archivedSenior
+    });
+
+  } catch (err) {
+    console.error('Archive Senior error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+// Unarchive Senior Citizen record
+exports.unarchiveSenior = async (req, res) => {
+  try {
+    const { senior_id } = req.body;
+    
+    if (!senior_id) {
+      return res.status(400).json({
+        message: 'Senior Citizen ID is required',
+        success: false
+      });
+    }
+
+    // Update the Senior Citizen record status to Active
+    const unarchivedSenior = await SeniorCitizen.findByIdAndUpdate(
+      senior_id,
+      { status: 'Active' },
+      { new: true, runValidators: true }
+    );
+
+    if (!unarchivedSenior) {
+      return res.status(404).json({
+        message: 'Senior Citizen record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Senior Citizen record unarchived successfully',
+      data: unarchivedSenior
+    });
+
+  } catch (err) {
+    console.error('Unarchive Senior error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+// Archive Youth record
+exports.archiveYouth = async (req, res) => {
+  try {
+    const { youth_id } = req.body;
+    
+    if (!youth_id) {
+      return res.status(400).json({
+        message: 'Youth ID is required',
+        success: false
+      });
+    }
+
+    // Update the Youth record status to Archived
+    const archivedYouth = await Youth.findByIdAndUpdate(
+      youth_id,
+      { status: 'Archived' },
+      { new: true, runValidators: true }
+    );
+
+    if (!archivedYouth) {
+      return res.status(404).json({
+        message: 'Youth record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Youth record archived successfully',
+      data: archivedYouth
+    });
+
+  } catch (err) {
+    console.error('Archive Youth error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
+
+// Unarchive Youth record
+exports.unarchiveYouth = async (req, res) => {
+  try {
+    const { youth_id } = req.body;
+    
+    if (!youth_id) {
+      return res.status(400).json({
+        message: 'Youth ID is required',
+        success: false
+      });
+    }
+
+    // Update the Youth record status to Active
+    const unarchivedYouth = await Youth.findByIdAndUpdate(
+      youth_id,
+      { status: 'Active' },
+      { new: true, runValidators: true }
+    );
+
+    if (!unarchivedYouth) {
+      return res.status(404).json({
+        message: 'Youth record not found',
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Youth record unarchived successfully',
+      data: unarchivedYouth
+    });
+
+  } catch (err) {
+    console.error('Unarchive Youth error:', err);
+    res.status(500).json({
+      message: 'Internal Server Error',
+      success: false,
+      error: err.message
+    });
+  }
+};
   
 // Analytics: OSCA (Senior Citizens) counts by barangay
 exports.getOscaAnalytics = async (req, res) => {
   try {
     const results = await SeniorCitizen.aggregate([
+      {
+        $match: {
+          status: { $ne: 'Archived' } // Exclude archived records
+        }
+      },
       {
         $group: {
           _id: "$identifying_information.address.barangay",
@@ -492,6 +749,11 @@ exports.getOscaAnalytics = async (req, res) => {
 exports.getPdaoAnalytics = async (req, res) => {
   try {
     const results = await PWD.aggregate([
+      {
+        $match: {
+          status: { $ne: 'Archived' } // Exclude archived records
+        }
+      },
       {
         $group: {
           _id: "$barangay",
@@ -539,11 +801,16 @@ async function fetchBarangays() {
 exports.renderSeniorForm = async (req, res) => {
  try {
     const barangays = await fetchBarangays();
-    const seniorCitizens = await SeniorCitizen.find({});
-
-    if (!seniorCitizens) {
-      return res.status(404).send('No barangays found');
+    // Filter based on status query parameter
+    let statusFilter = {};
+    if (req.query.status === 'archived') {
+      statusFilter = { status: 'Archived' };
+    } else if (req.query.status === 'all') {
+      statusFilter = {}; // Show all records
+    } else {
+      statusFilter = { status: { $ne: 'Archived' } }; // Default: show only Active records
     }
+    const seniorCitizens = await SeniorCitizen.find(statusFilter);
 
     if (!barangays) {
       return res.status(404).send('No barangays found');
@@ -691,7 +958,16 @@ exports.updateSenior = async (req, res) => {
   exports.renderPWDForm = async (req, res) => {
  try {
     const barangays = await fetchBarangays();
-    const pwd = await PWD.find({});
+    // Filter based on status query parameter
+    let statusFilter = {};
+    if (req.query.status === 'archived') {
+      statusFilter = { status: 'Archived' };
+    } else if (req.query.status === 'all') {
+      statusFilter = {}; // Show all records
+    } else {
+      statusFilter = { status: { $ne: 'Archived' } }; // Default: show only Active records
+    }
+    const pwd = await PWD.find(statusFilter);
 
  
     // Pass the barangays data to the EJS template
@@ -821,12 +1097,18 @@ exports.renderSuperAdminIndex = async (req, res) => {
 exports.renderYouth = async (req, res) => {
  try {
     const barangays = await fetchBarangays();
-    const youthData = await Youth.find({});
+    // Filter based on status query parameter
+    let statusFilter = {};
+    if (req.query.status === 'archived') {
+      statusFilter = { status: 'Archived' };
+    } else if (req.query.status === 'all') {
+      statusFilter = {}; // Show all records
+    } else {
+      statusFilter = { status: { $ne: 'Archived' } }; // Default: show only Active records
+    }
+    const youthData = await Youth.find(statusFilter);
 
     console.log(youthData);
-    // if (!barangays) {
-    //   return res.status(404).send('No barangays found');
-    // }
   
     // Pass the barangays data to the EJS template
    
@@ -1154,11 +1436,16 @@ exports.getPwdMapData = async (req, res) => {
     console.log('🔍 Fetching PWD data from database...');
     
     // First, let's see what barangay names are actually in the database
-    const allPwds = await PWD.find({}, 'barangay first_name last_name');
+    const allPwds = await PWD.find({ status: { $ne: 'Archived' } }, 'barangay first_name last_name');
     console.log('🔍 All barangay names in PWD database:', allPwds.map(p => p.barangay));
     
     // Get PWD count by barangay
     const pwdCounts = await PWD.aggregate([
+      {
+        $match: {
+          status: { $ne: 'Archived' } // Exclude archived records
+        }
+      },
       {
         $group: {
           _id: "$barangay",
@@ -1451,11 +1738,16 @@ exports.getSeniorMapData = async (req, res) => {
     console.log('🔍 Fetching senior data from database...');
     
     // First, let's see what barangay names are actually in the database
-    const allSeniors = await SeniorCitizen.find({}, 'identifying_information.address.barangay');
+    const allSeniors = await SeniorCitizen.find({ status: { $ne: 'Archived' } }, 'identifying_information.address.barangay');
     console.log('🔍 All barangay names in database:', allSeniors.map(s => s.identifying_information.address.barangay));
     
     // Get senior count by barangay
     const seniorCounts = await SeniorCitizen.aggregate([
+      {
+        $match: {
+          status: { $ne: 'Archived' } // Exclude archived records
+        }
+      },
       {
         $group: {
           _id: "$identifying_information.address.barangay",

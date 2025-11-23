@@ -179,6 +179,15 @@
 														<i data-feather="file-text"></i> Generate Report
 													</button>
 												</div>
+												<!-- Status Filter -->
+												<div class="filter-group" style="margin-left: 12px;">
+													<label for="status-filter">Status:</label>
+													<select id="status-filter" class="form-control">
+														<option value="active">Active Only</option>
+														<option value="archived">Archived Only</option>
+														<option value="all">All Records</option>
+													</select>
+												</div>
 											</div>
 											<% if (pwds && pwds.length > 0) { %>
 											<!-- Report Modal -->
@@ -211,6 +220,7 @@
 			<th>Barangay</th>
 			<th>Purok</th>
 			<th>Civil Status</th>
+			<th>Status</th>
 			<th>Actions</th>
 		</tr>
 	</thead>
@@ -228,6 +238,11 @@
 			<td><%= pwd.purok %></td>
 			<td><%= pwd.civil_status %></td>
 			<td>
+				<span class="badge <%= (pwd.status === 'Archived') ? 'badge-secondary' : 'badge-success' %>">
+					<%= pwd.status || 'Active' %>
+				</span>
+			</td>
+			<td>
 				<div class="action-container">
 					<button class="action action-primary view-btn" aria-label="View" data-toggle="modal" data-target="#viewModal" 
 						data-pwd='<%= JSON.stringify(pwd).replace(/'/g, "&apos;") %>'>
@@ -240,6 +255,14 @@
 						data-pwd='<%= JSON.stringify(pwd).replace(/'/g, "&apos;") %>'>
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+						</svg>
+					</button>
+					<button class="action action-archive archive-btn" aria-label="Archive" 
+						data-pwd-id="<%= pwd._id || pwd.id %>"
+						data-status="<%= pwd.status || 'Active' %>"
+						title="<%= (pwd.status === 'Archived') ? 'Unarchive' : 'Archive' %>">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
 						</svg>
 					</button>
 
@@ -937,6 +960,34 @@
 				// Get select elements
 				const barangaySelect = document.getElementById('barangay-filter');
 				const purokSelect = document.getElementById('purok-filter');
+				const statusFilter = document.getElementById('status-filter');
+				
+				// Set initial status filter value based on URL parameter
+				const urlParams = new URLSearchParams(window.location.search);
+				const statusParam = urlParams.get('status');
+				if (statusParam === 'all') {
+					statusFilter.value = 'all';
+				} else if (statusParam === 'archived') {
+					statusFilter.value = 'archived';
+				} else {
+					statusFilter.value = 'active';
+				}
+				
+				// Status filter change event handler
+				statusFilter.addEventListener('change', function() {
+					const selectedStatus = this.value;
+					const url = new URL(window.location.href);
+					
+					if (selectedStatus === 'active') {
+						url.searchParams.delete('status');
+					} else if (selectedStatus === 'archived') {
+						url.searchParams.set('status', 'archived');
+					} else {
+						url.searchParams.set('status', 'all');
+					}
+					
+					window.location.href = url.toString();
+				});
 				
 				// Initialize DataTable with filtering capability
 				var table = $('#example').DataTable({
@@ -1429,6 +1480,64 @@
 						updateCharCount();
 					});
 				}
+
+				// ARCHIVE FUNCTIONALITY
+				const archiveButtons = document.querySelectorAll('.archive-btn');
+				archiveButtons.forEach(button => {
+					button.addEventListener('click', async function() {
+						const pwdId = this.getAttribute('data-pwd-id');
+						const currentStatus = this.getAttribute('data-status');
+						const isArchived = currentStatus === 'Archived';
+						
+						if (!pwdId) {
+							alert('Error: PWD ID not found');
+							return;
+						}
+
+						// Confirm action
+						const action = isArchived ? 'unarchive' : 'archive';
+						const confirmMessage = isArchived 
+							? 'Are you sure you want to unarchive this PWD record?'
+							: 'Are you sure you want to archive this PWD record?';
+						
+						if (!confirm(confirmMessage)) {
+							return;
+						}
+
+						// Disable button during request
+						const originalHTML = this.innerHTML;
+						this.disabled = true;
+						this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+						try {
+							const endpoint = isArchived ? '/unarchive-pwd' : '/archive-pwd';
+							const response = await fetch(endpoint, {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json'
+								},
+								body: JSON.stringify({ pwd_id: pwdId })
+							});
+
+							const data = await response.json();
+
+							if (data.success) {
+								alert(data.message || `PWD record ${action}d successfully`);
+								// Reload the page to reflect the changes
+								window.location.reload();
+							} else {
+								alert('Error: ' + (data.message || 'Failed to ' + action + ' record'));
+								this.disabled = false;
+								this.innerHTML = originalHTML;
+							}
+						} catch (error) {
+							console.error('Archive error:', error);
+							alert('An error occurred while ' + action + 'ing the record. Please try again.');
+							this.disabled = false;
+							this.innerHTML = originalHTML;
+						}
+					});
+				});
 			});
 
 			// Initialize Feather Icons

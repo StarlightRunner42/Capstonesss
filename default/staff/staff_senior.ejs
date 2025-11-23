@@ -55,6 +55,21 @@
             width: 16px;
             height: 16px;
         }
+        .action-archive {
+            background: linear-gradient(135deg, #ed8936, #f6ad55);
+            color: white;
+        }
+        .action-archive:hover {
+            background: linear-gradient(135deg, #dd6b20, #ed8936);
+            box-shadow: 0 8px 25px rgba(237, 137, 54, 0.3);
+        }
+        .action-archive[data-status="Archived"] {
+            background: linear-gradient(135deg, #4a5568, #718096);
+        }
+        .action-archive[data-status="Archived"]:hover {
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            box-shadow: 0 8px 25px rgba(74, 85, 104, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -209,6 +224,15 @@
                                                     <option value="">First select a Barangay</option>
                                                 </select>
                                             </div>
+                                            <!-- Status Filter -->
+                                            <div class="filter-group" style="margin-left: 12px;">
+                                                <label for="status-filter">Status:</label>
+                                                <select id="status-filter" class="form-control">
+                                                    <option value="active">Active Only</option>
+                                                    <option value="archived">Archived Only</option>
+                                                    <option value="all">All Records</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         
                             
@@ -225,6 +249,7 @@
                                                         <th>Barangay</th>
                                                         <th>Purok</th>
                                                         <th>Civil Status</th>
+                                                        <th>Status</th>
                                                         <th>Actions</th>
                                                     </tr>
                                                 </thead>
@@ -246,6 +271,11 @@
                                                             <td><%= senior.identifying_information.address.purok %></td>
                                                             <td><%= senior.identifying_information.marital_status %></td>
                                                             <td>
+                                                                <span class="badge <%= (senior.status === 'Archived') ? 'badge-secondary' : 'badge-success' %>">
+                                                                    <%= senior.status || 'Active' %>
+                                                                </span>
+                                                            </td>
+                                                            <td>
                                                                 <div class="action-container">
                                                                     <button class="action view-btn" 
                                                                             aria-label="View" 
@@ -262,6 +292,14 @@
                                                                             data-senior='<%= JSON.stringify(senior).replace(/'/g, "&apos;") %>'>
                                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <button class="action action-archive archive-btn" aria-label="Archive" 
+                                                                        data-senior-id="<%= senior._id || senior.id %>"
+                                                                        data-status="<%= senior.status || 'Active' %>"
+                                                                        title="<%= (senior.status === 'Archived') ? 'Unarchive' : 'Archive' %>">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                                                                         </svg>
                                                                     </button>
                                                                 </div>
@@ -672,6 +710,34 @@
             // Get select elements
             const barangaySelect = document.getElementById('barangay-filter');
             const purokSelect = document.getElementById('purok-filter');
+            const statusFilter = document.getElementById('status-filter');
+            
+            // Set initial status filter value based on URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const statusParam = urlParams.get('status');
+            if (statusParam === 'all') {
+                statusFilter.value = 'all';
+            } else if (statusParam === 'archived') {
+                statusFilter.value = 'archived';
+            } else {
+                statusFilter.value = 'active';
+            }
+            
+            // Status filter change event handler
+            statusFilter.addEventListener('change', function() {
+                const selectedStatus = this.value;
+                const url = new URL(window.location.href);
+                
+                if (selectedStatus === 'active') {
+                    url.searchParams.delete('status');
+                } else if (selectedStatus === 'archived') {
+                    url.searchParams.set('status', 'archived');
+                } else {
+                    url.searchParams.set('status', 'all');
+                }
+                
+                window.location.href = url.toString();
+            });
             
             // Initialize purok dropdown as disabled
             purokSelect.disabled = true;
@@ -1206,6 +1272,64 @@
                     return true;
                 }
             );
+
+            // ARCHIVE FUNCTIONALITY FOR SENIOR CITIZENS
+            const archiveButtons = document.querySelectorAll('.archive-btn');
+            archiveButtons.forEach(button => {
+                button.addEventListener('click', async function() {
+                    const seniorId = this.getAttribute('data-senior-id');
+                    const currentStatus = this.getAttribute('data-status');
+                    const isArchived = currentStatus === 'Archived';
+                    
+                    if (!seniorId) {
+                        alert('Error: Senior Citizen ID not found');
+                        return;
+                    }
+
+                    // Confirm action
+                    const action = isArchived ? 'unarchive' : 'archive';
+                    const confirmMessage = isArchived 
+                        ? 'Are you sure you want to unarchive this Senior Citizen record?'
+                        : 'Are you sure you want to archive this Senior Citizen record?';
+                    
+                    if (!confirm(confirmMessage)) {
+                        return;
+                    }
+
+                    // Disable button during request
+                    const originalHTML = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+                    try {
+                        const endpoint = isArchived ? '/unarchive-senior' : '/archive-senior';
+                        const response = await fetch(endpoint, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ senior_id: seniorId })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            alert(data.message || `Senior Citizen record ${action}d successfully`);
+                            // Reload the page to reflect the changes
+                            window.location.reload();
+                        } else {
+                            alert('Error: ' + (data.message || 'Failed to ' + action + ' record'));
+                            this.disabled = false;
+                            this.innerHTML = originalHTML;
+                        }
+                    } catch (error) {
+                        console.error('Archive error:', error);
+                        alert('An error occurred while ' + action + 'ing the record. Please try again.');
+                        this.disabled = false;
+                        this.innerHTML = originalHTML;
+                    }
+                });
+            });
         });
     </script>
 
