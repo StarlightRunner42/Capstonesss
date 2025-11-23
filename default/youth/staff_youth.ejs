@@ -232,7 +232,9 @@
 																		data-youth-classification="<%= JSON.stringify(youth.youth_classification || []) %>"
 																		data-youth-classification-other="<%= youth.youth_classification_other || '' %>"
 																		data-youth-age-group="<%= JSON.stringify(youth.youth_age_group || []) %>"
-																		data-youth-age-group-other="<%= youth.youth_age_group_other || '' %>">
+																		data-youth-age-group-other="<%= youth.youth_age_group_other || '' %>"
+																		data-edited-by="<%= (youth.edit_log && youth.edit_log.edited_by) ? youth.edit_log.edited_by : '' %>"
+																		data-edited-at="<%= (youth.edit_log && youth.edit_log.edited_at) ? new Date(youth.edit_log.edited_at).toISOString() : '' %>">
 																		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 																			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
 																			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -384,10 +386,25 @@
                         </div>
                     </fieldset>
                 </div>
+                
+                <!-- Edit Log Information -->
+                <div style="margin-top: 20px;">
+                    <fieldset>
+                        <legend>EDIT HISTORY</legend>
+                        <p>
+                            <strong>Last Edited By:</strong>
+                            <span id="displayEditedBy">N/A</span>
+                        </p>
+                        <p>
+                            <strong>Last Edited At:</strong>
+                            <span id="displayEditedAt">N/A</span>
+                        </p>
+                    </fieldset>
+                </div>
             </div>
             <div class="modal-footer flex-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Add ASS</button>
+                
             </div>
 
             </div>
@@ -1038,7 +1055,9 @@ Thank you!</textarea>
 						youthClassification: parseAttrArray('data-youth-classification'),
 						youthClassificationOther: $button.data('youth-classification-other') || '',
 						youthAgeGroup: parseAttrArray('data-youth-age-group'),
-						youthAgeGroupOther: $button.data('youth-age-group-other') || ''
+						youthAgeGroupOther: $button.data('youth-age-group-other') || '',
+						editedBy: $button.data('edited-by') || '',
+						editedAt: $button.data('edited-at') || ''
 					};
 
 					// Populate modal fields
@@ -1149,6 +1168,20 @@ Thank you!</textarea>
 						$('#displayAssemblyTimes').hide();
 						$('#displayAssemblyReason').show();
 						$('#displayAssemblyReasonValue').text(data.reason || 'N/A');
+					}
+					
+					// Edit Log Information
+					if (data.editedBy) {
+						$('#displayEditedBy').text(data.editedBy);
+						if (data.editedAt) {
+							const editDate = new Date(data.editedAt);
+							$('#displayEditedAt').text(editDate.toLocaleString());
+						} else {
+							$('#displayEditedAt').text('N/A');
+						}
+					} else {
+						$('#displayEditedBy').text('N/A');
+						$('#displayEditedAt').text('N/A');
 					}
 				}
 			});
@@ -1429,7 +1462,10 @@ Thank you!</textarea>
 						youth_age_group: $('input[name="youth_age_group"]:checked').map(function() {
 							return this.value;
 						}).get(),
-						youth_age_group_other: $('#editYouthAgeGroupOther').val() || null
+						youth_age_group_other: $('#editYouthAgeGroupOther').val() || null,
+						// Add edit tracking information (will be overridden by backend session for security)
+						edited_by: '<%= (user && user.email) ? user.email : "Unknown" %>',
+						edited_at: new Date().toISOString()
 					};
 					
 					// Validate required fields

@@ -495,11 +495,26 @@
                         </div>
                     </fieldset>
                 </div>
+                
+                <!-- Edit Log Information -->
+                <fieldset class="no-bottom-margin" style="margin-top: 1rem;">
+                    <legend>EDIT HISTORY</legend>
+                    <div id="displayEditLog">
+                        <p class="compact-spacing">
+                            <strong>Last Edited By:</strong>
+                            <span id="displayEditedBy">N/A</span>
+                        </p>
+                        <p class="no-bottom-margin">
+                            <strong>Last Edited At:</strong>
+                            <span id="displayEditedAt">N/A</span>
+                        </p>
+                    </div>
+                </fieldset>
             </div>
             
             <div class="modal-footer flex-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Add ASS</button>
+                
             </div>
         </div>
     </div>
@@ -897,6 +912,20 @@
                             serviceContainer.innerHTML = '<p>No community service recorded</p>';
                         }
                         
+                        // Edit Log Information
+                        if (seniorData.edit_log && seniorData.edit_log.edited_by) {
+                            document.getElementById('displayEditedBy').textContent = seniorData.edit_log.edited_by || 'N/A';
+                            if (seniorData.edit_log.edited_at) {
+                                const editDate = new Date(seniorData.edit_log.edited_at);
+                                document.getElementById('displayEditedAt').textContent = editDate.toLocaleString();
+                            } else {
+                                document.getElementById('displayEditedAt').textContent = 'N/A';
+                            }
+                        } else {
+                            document.getElementById('displayEditedBy').textContent = 'N/A';
+                            document.getElementById('displayEditedAt').textContent = 'N/A';
+                        }
+                        
                         // Show the view modal
                         $('#viewModal').modal('show');
                         
@@ -1164,7 +1193,11 @@
                 const formData = new FormData(form);
                 
                 // Convert FormData to JSON
-                const jsonData = {};
+                const jsonData = {
+                    // Add edit tracking information (will be overridden by backend session for security)
+                    edited_by: '<%= (user && user.email) ? user.email : "Unknown" %>',
+                    edited_at: new Date().toISOString()
+                };
                 for (let [key, value] of formData.entries()) {
                     if (key.includes('contacts[')) {
                         // Handle contacts array

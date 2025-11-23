@@ -448,6 +448,21 @@
                         </div>
                     </div>
                 </fieldset>
+                
+                <!-- Edit Log Information -->
+                <fieldset class="no-bottom-margin" style="margin-top: 1rem;">
+                    <legend>EDIT HISTORY</legend>
+                    <div id="displayEditLog">
+                        <p class="compact-spacing">
+                            <strong>Last Edited By:</strong>
+                            <span id="displayEditedBy">N/A</span>
+                        </p>
+                        <p class="no-bottom-margin">
+                            <strong>Last Edited At:</strong>
+                            <span id="displayEditedAt">N/A</span>
+                        </p>
+                    </div>
+                </fieldset>
             </div>
             
             <div class="modal-footer flex-footer">
@@ -1182,6 +1197,20 @@
 								disabilityCausesContainer.innerHTML = '<p>No causes specified</p>';
 							}
 							
+							// Edit Log Information
+							if (pwdData.edit_log && pwdData.edit_log.edited_by) {
+								document.getElementById('displayEditedBy').textContent = pwdData.edit_log.edited_by || 'N/A';
+								if (pwdData.edit_log.edited_at) {
+									const editDate = new Date(pwdData.edit_log.edited_at);
+									document.getElementById('displayEditedAt').textContent = editDate.toLocaleString();
+								} else {
+									document.getElementById('displayEditedAt').textContent = 'N/A';
+								}
+							} else {
+								document.getElementById('displayEditedBy').textContent = 'N/A';
+								document.getElementById('displayEditedAt').textContent = 'N/A';
+							}
+							
 							// Show the modal using jQuery (since we're using Bootstrap 4)
 							$('#viewModal').modal('show');
 							console.log('View modal should be shown now');
@@ -1498,7 +1527,10 @@
 							// Collect form data
 							const formData = new FormData(form);
 							const updateData = {
-								pwd_id: document.getElementById('editPwdId').value
+								pwd_id: document.getElementById('editPwdId').value,
+								// Add edit tracking information (will be overridden by backend session for security)
+								edited_by: '<%= (user && user.email) ? user.email : "Unknown" %>',
+								edited_at: new Date().toISOString()
 							};
 							
 							// Add all form fields

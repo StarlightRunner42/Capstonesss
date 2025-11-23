@@ -426,6 +426,20 @@ exports.updatePwd = async (req, res) => {
       }
     });
 
+    // Add edit tracking information (prefer session user, fallback to request data)
+    const editorEmail = req.session?.user?.email || updateData.edited_by || 'Unknown';
+    const editTimestamp = updateData.edited_at || new Date().toISOString();
+    
+    // Remove these from updateData as they're not part of the schema
+    delete updateData.edited_by;
+    delete updateData.edited_at;
+    
+    // Add edit log
+    updateData.edit_log = {
+      edited_by: editorEmail,
+      edited_at: new Date(editTimestamp)
+    };
+
     // Update the PWD record
     const updatedPwd = await PWD.findByIdAndUpdate(
       pwd_id,
@@ -819,7 +833,8 @@ exports.renderSeniorForm = async (req, res) => {
     // Pass the barangays data to the EJS template
     res.render('staff/staff_senior', {
       barangays: barangays || {},
-      seniorCitizens: seniorCitizens || {}
+      seniorCitizens: seniorCitizens || {},
+      user: req.session?.user || null
     });
   } catch (err) {
     console.error('Error fetching barangays:', err);
@@ -924,6 +939,20 @@ exports.updateSenior = async (req, res) => {
       );
     }
 
+    // Add edit tracking information (prefer session user, fallback to request data)
+    const editorEmail = req.session?.user?.email || updateData.edited_by || 'Unknown';
+    const editTimestamp = updateData.edited_at || new Date().toISOString();
+    
+    // Remove these from updateObject as they're not part of the schema
+    delete updateData.edited_by;
+    delete updateData.edited_at;
+    
+    // Add edit log
+    updateObject['edit_log'] = {
+      edited_by: editorEmail,
+      edited_at: new Date(editTimestamp)
+    };
+
     console.log('Update object:', updateObject);
 
     // Update the senior citizen record
@@ -973,7 +1002,8 @@ exports.updateSenior = async (req, res) => {
     // Pass the barangays data to the EJS template
     res.render('staff/staff_pwd', {
       barangays: barangays || {},
-      pwds: pwd || {}
+      pwds: pwd || {},
+      user: req.session?.user || null
     });
   } catch (err) {
     console.error('Error fetching barangays:', err);
@@ -1094,8 +1124,83 @@ exports.renderSuperAdminIndex = async (req, res) => {
   }
   };
 
+// Function to check birthdays and update ages, auto-archive if age > 30
+const checkBirthdaysAndUpdateAges = async () => {
+  try {
+    const today = new Date();
+    const todayMonth = today.getMonth() + 1; // JavaScript months are 0-indexed
+    const todayDay = today.getDate();
+
+    // Get all active youth records
+    const activeYouths = await Youth.find({ status: 'Active' });
+
+    let updatedCount = 0;
+    let archivedCount = 0;
+
+    for (const youth of activeYouths) {
+      if (!youth.birthday) continue;
+
+      const birthday = new Date(youth.birthday);
+      const birthdayMonth = birthday.getMonth() + 1;
+      const birthdayDay = birthday.getDate();
+
+      // Check if today is their birthday (month and day match)
+      if (birthdayMonth === todayMonth && birthdayDay === todayDay) {
+        // Calculate the correct age based on birthday
+        let correctAge = today.getFullYear() - birthday.getFullYear();
+        const monthDiff = today.getMonth() - birthday.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+          correctAge--;
+        }
+
+        // Only update if the stored age is less than the correct age
+        // This prevents multiple increments if the page is loaded multiple times on the same day
+        // On their birthday, the age should increase by 1 from what it was yesterday
+        if (youth.age < correctAge) {
+          const newAge = correctAge; // This is effectively adding 1 on their birthday
+          
+          // If age is over 30, archive the record
+          if (newAge > 30) {
+            await Youth.findByIdAndUpdate(
+              youth._id,
+              { 
+                age: newAge,
+                status: 'Archived'
+              },
+              { new: true, runValidators: true }
+            );
+            archivedCount++;
+            console.log(`Youth ${youth.first_name} ${youth.last_name} turned ${newAge} and was automatically archived.`);
+          } else {
+            // Just update the age (adds 1 on their birthday)
+            await Youth.findByIdAndUpdate(
+              youth._id,
+              { age: newAge },
+              { new: true, runValidators: true }
+            );
+            updatedCount++;
+            console.log(`Youth ${youth.first_name} ${youth.last_name} turned ${newAge} (birthday today).`);
+          }
+        }
+      }
+    }
+
+    if (updatedCount > 0 || archivedCount > 0) {
+      console.log(`Birthday check completed: ${updatedCount} ages updated, ${archivedCount} records archived.`);
+    }
+
+    return { updatedCount, archivedCount };
+  } catch (err) {
+    console.error('Error checking birthdays and updating ages:', err);
+    throw err;
+  }
+};
+
 exports.renderYouth = async (req, res) => {
  try {
+    // Check birthdays and update ages before rendering
+    await checkBirthdaysAndUpdateAges();
+
     const barangays = await fetchBarangays();
     // Filter based on status query parameter
     let statusFilter = {};
@@ -1114,7 +1219,8 @@ exports.renderYouth = async (req, res) => {
    
     res.render('youth/staff_youth', {
       barangays: barangays || {},
-      youths: youthData || {}
+      youths: youthData || {},
+      user: req.session?.user || null
     });
   } catch (err) {
     console.error(err);
@@ -1233,6 +1339,20 @@ exports.updateYouth = async (req, res) => {
         updateData[field] = null;
       }
     });
+
+    // Add edit tracking information (prefer session user, fallback to request data)
+    const editorEmail = req.session?.user?.email || updateData.edited_by || 'Unknown';
+    const editTimestamp = updateData.edited_at || new Date().toISOString();
+    
+    // Remove these from updateData as they're not part of the schema
+    delete updateData.edited_by;
+    delete updateData.edited_at;
+    
+    // Add edit log
+    updateData.edit_log = {
+      edited_by: editorEmail,
+      edited_at: new Date(editTimestamp)
+    };
 
     // Update the youth record
     const updatedYouth = await Youth.findByIdAndUpdate(
