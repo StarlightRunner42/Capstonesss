@@ -183,7 +183,7 @@
 													<thead>
 														<tr>
 															<th>
-																<!-- <input type="checkbox" id="select-all" aria-label="Select all rows"> -->
+																<input type="checkbox" id="select-all" aria-label="Select all rows">
 															</th>
 															<th>Name</th>
 															<th>Age</th>
@@ -666,28 +666,31 @@
 													</button>
 												</div>
 
-												<!-- SMS Modal -->
-												<div class="modal fade" id="assistanceModal" tabindex="-1" aria-labelledby="assistanceModalLabel" aria-hidden="true">
-													<div class="modal-dialog modal-dialog-centered">
-														<div class="modal-content">
-															<div class="modal-header">
-																<h5 class="modal-title" id="assistanceModalLabel">
-																	<i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS
-																</h5>
-																<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-															</div>
-															<div class="modal-body">
-																<form id="smsForm">
-																	<div class="mb-2">
-																		<label class="form-label">Recipients:</label>
-																		<div id="recipientsList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
-																			<em>No recipients selected</em>
-																		</div>
-																	</div>
+												
+											<!-- SMS Modal -->
+<div class="modal fade" id="assistanceModal" tabindex="-1" aria-labelledby="assistanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assistanceModalLabel">
+                    <i data-feather="send" style="width: 20px; height: 20px;"></i> Send SMS
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="smsForm">
+                    <div class="mb-2">
+                        <label class="form-label">Recipients:</label>
+                        <div id="recipientsList" class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                            <em>No recipients selected</em>
+                        </div>
+                    </div>
 
-																	<div class="sms-template">
-																		<label for="smsMessage" class="form-label">Message:</label>
-																		<textarea id="smsMessage" class="form-control" rows="4">Dear Youth,
+                    <div class="sms-template">
+                        <label for="smsMessage" class="form-label">Message:</label>
+                        <textarea id="smsMessage" class="form-control" rows="4">Dear Youth,
 
 You are invited to participate in upcoming youth programs and activities:
 - Skills training & development
@@ -698,28 +701,28 @@ You are invited to participate in upcoming youth programs and activities:
 Visit your local LYDO office for more information.
 
 Thank you!</textarea>
-																		<small class="text-muted">You can edit this message before sending</small>
-																	</div>
+                        <small class="text-muted">You can edit this message before sending</small>
+                    </div>
 
-																	<!-- Character Counter -->
-																	<div class="mb-3">
-																		<small class="text-muted">
-																			Characters: <span id="charCount">0</span>/160
-																		</small>
-																	</div>
-																</form>
-															</div>
-															<div class="modal-footer">
-																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-																	<i data-feather="x" style="width: 16px; height: 16px;"></i> Cancel
-																</button>
-																<button type="button" class="btn btn-primary btn-send" id="sendSmsBtn">
-																	<i data-feather="send" style="width: 16px; height: 16px;"></i> Send SMS
-																</button>
-															</div>
-														</div>
-													</div>
-												</div>
+                    <!-- Character Counter -->
+                    <div class="mb-3">
+                        <small class="text-muted">
+                            Characters: <span id="charCount">0</span>/160
+                        </small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i data-feather="x" style="width: 16px; height: 16px;"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary btn-send" id="sendSmsBtn">
+                    <i data-feather="send" style="width: 16px; height: 16px;"></i> Send SMS
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 												<div id="no-data-alert" class="alert alert-info text-center" style="display: none;"> No data found. </div>
 											</div>
 										</div>
@@ -791,6 +794,36 @@ Thank you!</textarea>
 						}
 					});
 				}
+
+				// Select All functionality
+				$('#select-all').on('click', function() {
+					const isChecked = $(this).prop('checked');
+					const table = window.youthTable;
+					// Select/deselect all visible rows on current page
+					table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').prop('checked', isChecked);
+					// Update the SMS button state
+					const openSmsBtn = $('#openSmsForSelected');
+					if (openSmsBtn.length) {
+						const anyChecked = $('.row-checkbox:checked').length > 0;
+						openSmsBtn.prop('disabled', !anyChecked);
+					}
+				});
+
+				// Update select-all checkbox state when individual checkboxes change
+				$(document).on('change', '.row-checkbox', function() {
+					const table = window.youthTable;
+					const totalVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').length;
+					const checkedVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox:checked').length;
+					$('#select-all').prop('checked', totalVisible > 0 && totalVisible === checkedVisible);
+				});
+
+				// Update select-all state when table is redrawn (pagination, filtering, etc.)
+				window.youthTable.on('draw', function() {
+					const table = window.youthTable;
+					const totalVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').length;
+					const checkedVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox:checked').length;
+					$('#select-all').prop('checked', totalVisible > 0 && totalVisible === checkedVisible);
+				});
 
 				// Barangay/Purok dynamic filters
 				const barangaysData = <%- JSON.stringify(barangays) %>;

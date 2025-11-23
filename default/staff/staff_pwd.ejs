@@ -213,7 +213,7 @@
 	<thead>
 		<tr>
 			<th>
-				<!-- <input type="checkbox" id="select-all" aria-label="Select all rows"> -->
+				<input type="checkbox" id="select-all" aria-label="Select all rows">
 			</th>
 			<th>Full Name</th>
 			<th>Age</th>
@@ -1022,6 +1022,39 @@
 							$(row).hide();
 						}
 					}
+				});
+
+				// Select All functionality
+				$('#select-all').on('click', function() {
+					const isChecked = $(this).prop('checked');
+					// Select/deselect all visible rows on current page
+					table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').prop('checked', isChecked);
+					// Update the SMS button state
+					const openSmsBtn = document.getElementById('openSmsForSelected');
+					if (openSmsBtn) {
+						const anyChecked = Array.from(document.querySelectorAll('.row-checkbox')).some(cb => cb.checked);
+						openSmsBtn.disabled = !anyChecked;
+					}
+				});
+
+				// Update select-all checkbox state when individual checkboxes change
+				$(document).on('change', '.row-checkbox', function() {
+					const totalVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').length;
+					const checkedVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox:checked').length;
+					$('#select-all').prop('checked', totalVisible > 0 && totalVisible === checkedVisible);
+					// Update the SMS button state
+					const openSmsBtn = document.getElementById('openSmsForSelected');
+					if (openSmsBtn) {
+						const anyChecked = Array.from(document.querySelectorAll('.row-checkbox')).some(cb => cb.checked);
+						openSmsBtn.disabled = !anyChecked;
+					}
+				});
+
+				// Update select-all state when table is redrawn (pagination, filtering, etc.)
+				table.on('draw', function() {
+					const totalVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox').length;
+					const checkedVisible = table.rows({ page: 'current' }).nodes().to$().find('.row-checkbox:checked').length;
+					$('#select-all').prop('checked', totalVisible > 0 && totalVisible === checkedVisible);
 				});
 
 				// Initialize purok dropdown as disabled
