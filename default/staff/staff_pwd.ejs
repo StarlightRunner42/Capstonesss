@@ -269,17 +269,7 @@
 										<label class="form-label">
 											<i data-feather="message-square" style="width: 16px; height: 16px;"></i> Message Template
 										</label>
-										<textarea class="form-control" id="smsMessage" rows="6" required>Hello! 
-
-			You are eligible for PWD benefits including:
-			- 20% discount on medicines, medical services & transportation
-			- Priority lane access
-			- Educational assistance
-			- Skills training programs
-
-			Visit your local office to claim your benefits.
-
-			Thank you!</textarea>
+										<textarea class="form-control" id="smsMessage" rows="6" required>Hello!You are eligible for PWD benefits Visit your local office to claim.Thank you!</textarea>
 										<small class="text-muted">You can edit this message before sending</small>
 									</div>
 
@@ -1153,6 +1143,16 @@
 					});
 				});
 
+				// Add cleanup handler for view modal to remove backdrop
+				$('#viewModal').on('hidden.bs.modal', function () {
+					// Remove any leftover backdrop elements
+					$('.modal-backdrop').remove();
+					// Remove modal-open class from body
+					$('body').removeClass('modal-open');
+					// Remove inline styles that might block interaction
+					$('body').css('padding-right', '');
+				});
+
 				// EDIT MODAL CODE - FIXED VERSION
 				const editButtons = document.querySelectorAll('.edit-btn');
 				
@@ -1220,6 +1220,16 @@
 							console.error('Error parsing edit PWD data:', e);
 						}
 					});
+				});
+
+				// Add cleanup handler for edit modal to remove backdrop
+				$('#editModal').on('hidden.bs.modal', function () {
+					// Remove any leftover backdrop elements
+					$('.modal-backdrop').remove();
+					// Remove modal-open class from body
+					$('body').removeClass('modal-open');
+					// Remove inline styles that might block interaction
+					$('body').css('padding-right', '');
 				});
 
 				// SMS Functionality
