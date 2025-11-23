@@ -26,9 +26,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // KK Assembly toggle
     const assemblySelect = document.getElementById('Assembly');
     assemblySelect.addEventListener('change', toggleSkFields);
+    
+    // Apply uppercase conversion to all relevant input fields
+    const inputFields = document.querySelectorAll('input[type="text"], input[type="tel"], textarea');
+    
+    // Apply to each field
+    inputFields.forEach(input => {
+        // Convert existing value
+        if (input.value) {
+            input.value = input.value.toUpperCase();
+        }
+        
+        // Add event listener for new input
+        input.addEventListener('input', function() {
+            convertToUppercase(this);
+        });
+    });
 });
 
-// Age calculation
+// Age calculation with validation
 function calculateAge() {
     const birthdayInput = document.getElementById('birthday').value;
     if (!birthdayInput) return false;
@@ -51,8 +67,24 @@ function calculateAge() {
         age--;
     }
   
-    document.getElementById('age').value = age;
-    return true;
+    const ageInput = document.getElementById('age');
+    
+    // Validate age must be 15-30 years old
+    if (age < 15 || age > 30) {
+        ageInput.value = '';
+        ageInput.style.borderColor = 'red';
+        document.getElementById('birthday').value = '';
+        Swal.fire({
+            title: "Age Requirement",
+            text: "You must be between 15 and 30 years old to register as a youth.",
+            icon: "error"
+        });
+        return false;
+    } else {
+        ageInput.value = age;
+        ageInput.style.borderColor = '';
+        return true;
+    }
 }
 
 // Toggle SK fields based on KK Assembly selection
@@ -224,6 +256,11 @@ function validateCurrentStep(currentStep) {
         });
     }
     return isValid;
+}
+
+// Function to convert input to uppercase
+function convertToUppercase(inputElement) {
+    inputElement.value = inputElement.value.toUpperCase();
 }
 
 // Initialize first tab
