@@ -1551,6 +1551,25 @@ exports.debugSeniorData = async (req, res) => {
 };
 
 // Get PWD count data by barangay for the map
+exports.getAllPwds = async (req, res) => {
+  try {
+    // Get all PWD records (including archived if needed)
+    const statusFilter = req.query.status === 'all' ? {} : { status: { $ne: 'Archived' } };
+    const pwds = await PWD.find(statusFilter);
+    
+    res.json({
+      success: true,
+      pwds: pwds
+    });
+  } catch (err) {
+    console.error('Error fetching PWD data:', err);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch PWD data'
+    });
+  }
+};
+
 exports.getPwdMapData = async (req, res) => {
   try {
     console.log('🔍 Fetching PWD data from database...');

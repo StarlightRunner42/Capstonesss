@@ -186,6 +186,9 @@
 													<h2 class="table-title">Barangay PDAO Table</h2>
 													<div class="search-container">
 														<input type="text" class="search-input" id="searchInput" placeholder="🔍 Search barangays...">
+														<button id="generateReportBtn" class="btn btn-info" type="button" style="margin-left: 12px;">
+															<i data-feather="file-text"></i> Generate Report
+														</button>
 													</div>
 												</div>
 
@@ -356,6 +359,226 @@
 			}
 			gtag('js', new Date());
 			gtag('config', 'UA-23581568-13');
+		</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+		<script>
+			// Initialize Feather Icons
+			if (typeof feather !== 'undefined' && feather.replace) {
+				try {
+					feather.replace();
+				} catch (e) {
+					console.warn('feather.replace() failed:', e);
+				}
+			}
+
+			// Generate Report functionality
+			document.addEventListener('DOMContentLoaded', function() {
+				console.log('DOM loaded - initializing Generate Report button');
+				
+				// Initialize Generate Report Button
+				const generateReportBtn = document.getElementById('generateReportBtn');
+				
+				if (generateReportBtn) {
+					console.log('Generate Report button found, adding event listener');
+					
+					generateReportBtn.addEventListener('click', async function() {
+						console.log('Generate Report button clicked');
+						
+						try {
+							// Fetch PWD data from the server
+							const response = await fetch('/api/pwds', { credentials: 'same-origin' });
+							if (!response.ok) {
+								throw new Error('Failed to fetch PWD data');
+							}
+							const data = await response.json();
+							const pwdsData = data.pwds || data.data || [];
+							
+							if (!pwdsData || pwdsData.length === 0) {
+								alert('No PWD data available to generate report.');
+								return;
+							}
+							
+							// Build the report table HTML
+							const tableHtml = buildPwdsReportTableHtml(pwdsData);
+							
+							// Open new window for report
+							const newWin = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
+							
+							if (!newWin) {
+								alert('Popup blocked! Please allow popups for this site to view the report.');
+								return;
+							}
+							
+							const docHtml = `<!doctype html>
+								<html>
+								<head>
+									<meta charset="utf-8">
+									<title>PWD Disability Report</title>
+									<meta name="viewport" content="width=device-width,initial-scale=1">
+									<link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+									<style>
+										body { padding: 20px; font-family: Arial, sans-serif; }
+										.table { margin-top: 20px; }
+										.summary { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; }
+									</style>
+								</head>
+								<body>
+									<div class="container">
+										<h2 class="my-3 text-center">PWD Disability Report</h2>
+										<p class="text-center"><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+										${tableHtml}
+									</div>
+								</body>
+								</html>`;
+							
+							newWin.document.open();
+							newWin.document.write(docHtml);
+							newWin.document.close();
+							
+							console.log('Report generated successfully');
+							
+						} catch (e) {
+							console.error('Error generating report:', e);
+							alert('Error generating report: ' + e.message);
+						}
+					});
+				} else {
+					console.error('Generate Report button not found in DOM!');
+				}
+
+				// Build table HTML for report
+				function buildPwdsReportTableHtml(pwds) {
+					function esc(s){ 
+						return String(s === null || s === undefined ? '' : s)
+							.replace(/&/g,'&amp;')
+							.replace(/</g,'&lt;')
+							.replace(/>/g,'&gt;'); 
+					}
+					
+					const mapping = {
+						'Hard of Hearing/Deaf': 'Deaf or Hard of Hearing',
+						'Visual/Blind': 'Visual Disability',
+						'Speech/Language Impairment': 'Speech and Language Impairment',
+						'Learning Disability': 'Learning Disability',
+						'Mental/Intellectual': 'Intellectual Disability',
+						'Physical Disability': 'Physical Disability (Orthopedic)',
+						'Psychosocial Disability': 'Psychosocial Disability',
+						'Cancer': 'Cancer (RA11215)',
+						'Rare Disease': 'Rare Disease (RA10747)',
+						'Multiple Disability': 'Multiple Disability',
+						'Other': 'Other'
+					};
+					
+					const stats = {};
+					const uniqueIds = new Set();
+					
+					// Process PWD data
+					pwds.forEach(p => {
+						if (p && (p._id || p.id)) uniqueIds.add(p._id || p.id);
+						const age = (typeof p.age === 'number') ? p.age : (p.age ? parseInt(p.age,10) : null);
+						const gender = (p.gender || 'Unknown').toString();
+						const disabilities = Array.isArray(p.disability) ? p.disability : (p.disability ? [p.disability] : []);
+						
+						disabilities.forEach(d => {
+							const key = mapping[d] || d || 'Other';
+							if (!stats[key]) {
+								stats[key] = { 
+									count: 0, 
+									male: 0, 
+									female: 0, 
+									otherGender: 0, 
+									ages: [] 
+								};
+							}
+							stats[key].count += 1;
+							if (age !== null && !isNaN(age)) stats[key].ages.push(age);
+							if (/^male$/i.test(gender)) stats[key].male += 1;
+							else if (/^female$/i.test(gender)) stats[key].female += 1;
+							else stats[key].otherGender += 1;
+						});
+					});
+
+					const preferredOrder = [
+						'Deaf or Hard of Hearing', 'Intellectual Disability', 'Learning Disability', 
+						'Mental Disability', 'Physical Disability (Orthopedic)', 'Psychosocial Disability', 
+						'Speech and Language Impairment', 'Visual Disability', 'Cancer (RA11215)', 
+						'Rare Disease (RA10747)', 'Multiple Disability', 'Other'
+					];
+					
+					const keys = Array.from(new Set([...preferredOrder, ...Object.keys(stats)]));
+					let html = `
+						<div class="table-responsive">
+							<table class="table table-striped table-bordered table-hover">
+								<thead class="table-dark">
+									<tr>
+										<th>Disability Type</th>
+										<th>Age Range</th>
+										<th>Total</th>
+										<th>Male</th>
+										<th>Female</th>
+										<th>Other/Unknown</th>
+									</tr>
+								</thead>
+								<tbody>`;
+					
+					keys.forEach(k => {
+						if (!stats[k]) return;
+						const s = stats[k];
+						const minAge = s.ages.length ? Math.min(...s.ages) : 'N/A';
+						const maxAge = s.ages.length ? Math.max(...s.ages) : 'N/A';
+						const ageRange = s.ages.length ? `${minAge} - ${maxAge}` : 'N/A';
+						
+						html += `
+							<tr>
+								<td><strong>${esc(k)}</strong></td>
+								<td>${esc(ageRange)}</td>
+								<td><span class="badge bg-primary">${s.count}</span></td>
+								<td>${s.male}</td>
+								<td>${s.female}</td>
+								<td>${s.otherGender}</td>
+							</tr>`;
+					});
+					
+					html += '</tbody></table></div>';
+					
+					// Calculate totals
+					let totalMale = 0, totalFemale = 0, totalOther = 0, totalCount = 0;
+					Object.values(stats).forEach(s => { 
+						totalMale += s.male; 
+						totalFemale += s.female; 
+						totalOther += s.otherGender;
+						totalCount += s.count;
+					});
+					
+					const allAges = [].concat(...Object.values(stats).map(s => s.ages));
+					const overallAgeRange = allAges.length ? 
+						`${Math.min(...allAges)} - ${Math.max(...allAges)}` : 'N/A';
+					
+					html += `
+						<div class="summary">
+							<h5>Report Summary</h5>
+							<div class="row">
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li><strong>Unique PWDs:</strong> ${uniqueIds.size}</li>
+										<li><strong>Total Disability Records:</strong> ${totalCount}</li>
+										<li><strong>Overall Age Range:</strong> ${overallAgeRange}</li>
+									</ul>
+								</div>
+								<div class="col-md-6">
+									<ul class="list-unstyled">
+										<li><strong>Gender Distribution:</strong></li>
+										<li>&nbsp;&nbsp;Male: ${totalMale}</li>
+										<li>&nbsp;&nbsp;Female: ${totalFemale}</li>
+										<li>&nbsp;&nbsp;Other/Unknown: ${totalOther}</li>
+									</ul>
+								</div>
+							</div>
+						</div>`;
+					
+					return html;
+				}
+			});
 		</script>
 	</body>
 </html>

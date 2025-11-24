@@ -123,6 +123,7 @@ router.post('/add-data', controller.createResident);
 router.get('/api/analytics/osca', requireAuth, controller.getOscaAnalytics);
 router.get('/api/analytics/pdao', requireAuth, controller.getPdaoAnalytics);
 router.get('/api/analytics/youth', controller.getYouthAnalytics);
+router.get('/api/pwds', requireAuth, controller.getAllPwds);
 
 
 //ArcGIS routes
