@@ -189,6 +189,7 @@
 															<th>Age</th>
 															<th>Barangay</th>
 															<th>Purok</th>
+															<th>Employment status</th>
 															<th>Status</th>
 															<th>Actions</th>
 														</tr>
@@ -203,6 +204,7 @@
 															<td><%= youth.age %> </td>
 															<td><%= youth.barangay %> </td>
 															<td><%= youth.purok %> </td>
+															<td><%= youth.employment_status %> </td>
 															<td>
 																<span class="badge <%= (youth.status === 'Archived') ? 'badge-secondary' : 'badge-success' %>">
 																	<%= youth.status || 'Active' %>
