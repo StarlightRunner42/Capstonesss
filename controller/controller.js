@@ -1394,6 +1394,8 @@ exports.updateYouth = async (req, res) => {
 
 // Send SMS via external API
 exports.sendSms = async (req, res) => {
+  const { SmsHistory } = require('../model/schema');
+  const sentBy = req.user ? (req.user.email || req.user.name || 'Unknown') : 'Unknown';
 
   try {
     const { recipients, message } = req.body;
@@ -1409,14 +1411,33 @@ exports.sendSms = async (req, res) => {
     const apiUrl = 'https://sms.iprogtech.com/api/v1/sms_messages';
 
     const results = [];
+    const historyRecords = [];
 
     // Send messages sequentially to avoid rate issues; can be parallelized if needed
     for (const r of recipients) {
       const phone = r.phone || '';
       const name = r.name || '';
+      const recordId = r.record_id || '';
+      const recipientType = r.recipient_type || 'PWD';
 
       if (!phone) {
         results.push({ phone, name, status: 'skipped', reason: 'no phone' });
+        // Still save to history even if skipped
+        if (recordId) {
+          historyRecords.push({
+            recipient_type: recipientType,
+            record_id: recordId,
+            phone_number: phone,
+            first_name: r.first_name || '',
+            middle_name: r.middle_name || '',
+            last_name: r.last_name || '',
+            barangay: r.barangay || '',
+            purok: r.purok || '',
+            message: message,
+            status: 'skipped',
+            sent_by: sentBy
+          });
+        }
         continue;
       }
 
@@ -1426,6 +1447,7 @@ exports.sendSms = async (req, res) => {
         message: message
       };
 
+      let smsStatus = 'error';
       try {
         const resp = await axios.post(apiUrl, body, {
           headers: { 'Content-Type': 'application/json' },
@@ -1437,6 +1459,7 @@ exports.sendSms = async (req, res) => {
         console.log('headers:', resp.headers);
         console.log('data:', resp.data);
 
+        smsStatus = 'sent';
         results.push({ phone, name, status: 'sent', response: resp.data });
       } catch (err) {
         // Log detailed error
@@ -1446,6 +1469,34 @@ exports.sendSms = async (req, res) => {
           console.error(`SMS send error for ${phone}:`, err.message);
         }
         results.push({ phone, name, status: 'error', error: err && err.response ? err.response.data : err.message });
+      }
+
+      // Save to history
+      if (recordId) {
+        historyRecords.push({
+          recipient_type: recipientType,
+          record_id: recordId,
+          phone_number: phone,
+          first_name: r.first_name || '',
+          middle_name: r.middle_name || '',
+          last_name: r.last_name || '',
+          barangay: r.barangay || '',
+          purok: r.purok || '',
+          message: message,
+          status: smsStatus,
+          sent_by: sentBy
+        });
+      }
+    }
+
+    // Save all history records to database
+    if (historyRecords.length > 0) {
+      try {
+        await SmsHistory.insertMany(historyRecords);
+        console.log(`Saved ${historyRecords.length} SMS history records`);
+      } catch (historyErr) {
+        console.error('Error saving SMS history:', historyErr);
+        // Don't fail the request if history save fails
       }
     }
 
@@ -1458,6 +1509,42 @@ exports.sendSms = async (req, res) => {
     }
   } catch (err) {
     console.error('sendSms error:', err);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+};
+
+// Get SMS History
+exports.getSmsHistory = async (req, res) => {
+  const { SmsHistory } = require('../model/schema');
+  
+  try {
+    const { recipient_type, limit = 100, page = 1 } = req.query;
+    
+    const query = {};
+    if (recipient_type && (recipient_type === 'PWD' || recipient_type === 'Youth' || recipient_type === 'Senior')) {
+      query.recipient_type = recipient_type;
+    }
+    
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const history = await SmsHistory.find(query)
+      .sort({ sent_at: -1 })
+      .limit(parseInt(limit))
+      .skip(skip)
+      .lean();
+    
+    const total = await SmsHistory.countDocuments(query);
+    
+    res.json({
+      success: true,
+      data: history,
+      total: total,
+      page: parseInt(page),
+      limit: parseInt(limit),
+      totalPages: Math.ceil(total / parseInt(limit))
+    });
+  } catch (err) {
+    console.error('getSmsHistory error:', err);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 };

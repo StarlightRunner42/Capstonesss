@@ -259,7 +259,13 @@
                                                             <td>
                                                                 <input type="checkbox" class="row-checkbox" value="<%= senior._id || senior.id %>" aria-label="Select row"
                                                                     data-phone="<%= (senior.identifying_information.contacts && senior.identifying_information.contacts.length && senior.identifying_information.contacts[0].phone) ? senior.identifying_information.contacts[0].phone : '' %>"
-                                                                    data-name="<%= senior.identifying_information.name.first_name + ' ' + senior.identifying_information.name.last_name %>">
+                                                                    data-name="<%= senior.identifying_information.name.first_name + ' ' + senior.identifying_information.name.last_name %>"
+                                                                    data-first-name="<%= senior.identifying_information.name.first_name || '' %>"
+                                                                    data-middle-name="<%= senior.identifying_information.name.middle_name || '' %>"
+                                                                    data-last-name="<%= senior.identifying_information.name.last_name || '' %>"
+                                                                    data-barangay="<%= senior.identifying_information.address.barangay || '' %>"
+                                                                    data-purok="<%= senior.identifying_information.address.purok || '' %>"
+                                                                    data-record-id="<%= senior._id || senior.id %>">
                                                             </td>
                                                             <td>
                                                                 <%= senior.identifying_information.name.last_name %>
@@ -313,6 +319,9 @@
                                                 <button id="openSmsForSelected" class="btn btn-success" disabled>
                                                     <i data-feather="message-circle"></i> Send SMS to selected
                                                 </button>
+                                                <button id="viewSmsHistoryBtn" class="btn btn-info ml-2">
+                                                    <i data-feather="clock"></i> View SMS History
+                                                </button>
                                             </div>
 
                                             <!-- SMS Modal -->
@@ -361,6 +370,47 @@
                                                             <button type="button" class="btn btn-primary btn-send" id="sendSmsBtn">
                                                                 <i data-feather="send" style="width: 16px; height: 16px;"></i> Send SMS
                                                             </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- SMS History Modal -->
+                                            <div class="modal fade" id="smsHistoryModal" tabindex="-1" aria-labelledby="smsHistoryModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-xl">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="smsHistoryModalLabel">
+                                                                <i data-feather="clock"></i> SMS History
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                                                <table class="table table-striped table-bordered table-hover">
+                                                                    <thead class="table-dark" style="position: sticky; top: 0; z-index: 10;">
+                                                                        <tr>
+                                                                            <th>Date & Time</th>
+                                                                            <th>Phone Number</th>
+                                                                            <th>Name</th>
+                                                                            <th>Barangay</th>
+                                                                            <th>Purok</th>
+                                                                            <th>Message</th>
+                                                                            <th>Status</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody id="smsHistoryTableBody">
+                                                                        <tr>
+                                                                            <td colspan="7" class="text-center">Loading...</td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1434,7 +1484,14 @@
                     const message = messageEl ? messageEl.value.trim() : '';
                     const recipients = recipientsListEl ? Array.from(recipientsListEl.querySelectorAll('.recipient-item')).map(el => ({
                         phone: el.dataset.phone,
-                        name: el.dataset.name
+                        name: el.dataset.name,
+                        first_name: el.dataset.firstName || '',
+                        middle_name: el.dataset.middleName || '',
+                        last_name: el.dataset.lastName || '',
+                        barangay: el.dataset.barangay || '',
+                        purok: el.dataset.purok || '',
+                        record_id: el.dataset.recordId || '',
+                        recipient_type: 'Senior'
                     })) : [];
 
                     // Validation
@@ -1551,6 +1608,12 @@
                             item.className = 'recipient-item';
                             item.dataset.phone = phone;
                             item.dataset.name = name;
+                            item.dataset.firstName = cb.dataset.firstName || cb.getAttribute('data-first-name') || '';
+                            item.dataset.middleName = cb.dataset.middleName || cb.getAttribute('data-middle-name') || '';
+                            item.dataset.lastName = cb.dataset.lastName || cb.getAttribute('data-last-name') || '';
+                            item.dataset.barangay = cb.dataset.barangay || cb.getAttribute('data-barangay') || '';
+                            item.dataset.purok = cb.dataset.purok || cb.getAttribute('data-purok') || '';
+                            item.dataset.recordId = cb.dataset.recordId || cb.getAttribute('data-record-id') || cb.value;
                             item.style.padding = '4px 6px';
                             item.style.borderBottom = '1px solid #f1f1f1';
                             item.innerHTML = `<strong>${name}</strong> <span class="text-muted">${phone}</span>`;
@@ -1591,6 +1654,67 @@
             });
         }
     })();
+
+    // SMS HISTORY FUNCTIONALITY FOR SENIOR CITIZENS
+    document.addEventListener('DOMContentLoaded', function() {
+        const viewSmsHistoryBtn = document.getElementById('viewSmsHistoryBtn');
+        if (viewSmsHistoryBtn) {
+            viewSmsHistoryBtn.addEventListener('click', async function() {
+                const modalEl = document.getElementById('smsHistoryModal');
+                const tableBody = document.getElementById('smsHistoryTableBody');
+                
+                // Show modal
+                if (typeof $ !== 'undefined' && $.fn.modal) {
+                    $('#smsHistoryModal').modal('show');
+                } else if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+                
+                // Show loading
+                tableBody.innerHTML = '<tr><td colspan="7" class="text-center">Loading...</td></tr>';
+                
+                try {
+                    const response = await fetch('/sms-history?recipient_type=Senior&limit=200');
+                    const data = await response.json();
+                    
+                    if (data.success && data.data) {
+                        if (data.data.length === 0) {
+                            tableBody.innerHTML = '<tr><td colspan="7" class="text-center">No SMS history found</td></tr>';
+                        } else {
+                            tableBody.innerHTML = '';
+                            data.data.forEach(record => {
+                                const row = document.createElement('tr');
+                                const sentDate = new Date(record.sent_at);
+                                const fullName = `${record.first_name || ''} ${record.middle_name || ''} ${record.last_name || ''}`.trim();
+                                const statusBadge = record.status === 'sent' 
+                                    ? '<span class="badge badge-success">Sent</span>'
+                                    : record.status === 'error'
+                                    ? '<span class="badge badge-danger">Error</span>'
+                                    : '<span class="badge badge-warning">Skipped</span>';
+                                
+                                row.innerHTML = `
+                                    <td>${sentDate.toLocaleString()}</td>
+                                    <td>${record.phone_number || 'N/A'}</td>
+                                    <td>${fullName || 'N/A'}</td>
+                                    <td>${record.barangay || 'N/A'}</td>
+                                    <td>${record.purok || 'N/A'}</td>
+                                    <td style="max-width: 200px; word-wrap: break-word;">${record.message || 'N/A'}</td>
+                                    <td>${statusBadge}</td>
+                                `;
+                                tableBody.appendChild(row);
+                            });
+                        }
+                    } else {
+                        tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading SMS history</td></tr>';
+                    }
+                } catch (error) {
+                    console.error('Error loading SMS history:', error);
+                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-danger">Error loading SMS history</td></tr>';
+                }
+            });
+        }
+    });
 </script>
 
     <!-- Required Jquery -->

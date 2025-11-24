@@ -391,11 +391,65 @@ youthSchema.pre('save', function(next) {
   next();
 });
 
+const SmsHistorySchema = new mongoose.Schema({
+  recipient_type: {
+    type: String,
+    enum: ['PWD', 'Youth', 'Senior'],
+    required: true
+  },
+  record_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true
+  },
+  phone_number: {
+    type: String,
+    required: true
+  },
+  first_name: {
+    type: String,
+    required: true
+  },
+  middle_name: {
+    type: String,
+    default: ''
+  },
+  last_name: {
+    type: String,
+    required: true
+  },
+  barangay: {
+    type: String,
+    required: true
+  },
+  purok: {
+    type: String,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['sent', 'error', 'skipped'],
+    required: true
+  },
+  sent_by: {
+    type: String,
+    required: true
+  },
+  sent_at: {
+    type: Date,
+    default: Date.now
+  }
+}, { timestamps: true });
+
 const User = mongoose.model('User', UserSchema);
 const SeniorCitizen  = mongoose.model('SeniorCitizen', SeniorCitizenSchema);
 const Barangay = mongoose.model('Barangay', BarangaySchema);
 const PWD = mongoose.model('PWD', pwdRegistrationSchema);
 const Youth = mongoose.model('Youth', youthSchema);
+const SmsHistory = mongoose.model('SmsHistory', SmsHistorySchema);
 
 
-module.exports = { User,SeniorCitizen ,Barangay,PWD,Youth };
+module.exports = { User,SeniorCitizen ,Barangay,PWD,Youth,SmsHistory };

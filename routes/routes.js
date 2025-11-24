@@ -19,6 +19,8 @@ router.get('/logout', controller.logout);
 
 // SMS sending endpoint (receives requests from frontend and relays to external SMS API)
 router.post('/send-sms', requireAuth, controller.sendSms);
+// SMS history endpoint
+router.get('/sms-history', requireAuth, controller.getSmsHistory);
 
 // Admin routes
 router.get('/Index', requireAuth, (req, res) => {
