@@ -851,26 +851,119 @@
 							}
 							
 							const docHtml = `<!doctype html>
-								<html>
-								<head>
-									<meta charset="utf-8">
-									<title>PWD Disability Report</title>
-									<meta name="viewport" content="width=device-width,initial-scale=1">
-									<link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
-									<style>
-										body { padding: 20px; font-family: Arial, sans-serif; }
-										.table { margin-top: 20px; }
-										.summary { background: #f8f9fa; padding: 15px; border-radius: 5px; margin-top: 20px; }
-									</style>
-								</head>
-								<body>
-									<div class="container">
-										<h2 class="my-3 text-center">PWD Disability Report</h2>
-										<p class="text-center"><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-										${tableHtml}
-									</div>
-								</body>
-								</html>`;
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PWD Disability Report</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+    <style>
+        body { padding: 30px; font-family: Arial, sans-serif; }
+
+        .header-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            min-height: 130px;
+        }
+
+        .logo-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 95px;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .title-section { 
+            margin-top: 15px; 
+            text-align: center;
+        }
+
+        .report-info {
+            margin: 20px auto;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            max-width: 800px;
+            white-space: nowrap;
+        }
+
+        .info-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        .underline {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            width: 120px;
+            height: 14px;
+            vertical-align: bottom;
+            margin-left: 5px;
+        }
+
+        .address-underline {
+            width: 150px;
+        }
+
+        .generated-date {
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+	  <div class="text-center generated-date">
+        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+    </div>
+	
+    <div class="header-wrapper">
+        <img src="/assets/images/SilayLogo.jpg" class="logo-left">
+        <img src="/assets/images/BagongPilipinas.jpg" class="logo-right">
+
+        <div class="main-header">
+            <h4>Republic of the Philippines</h4>
+            <h2><strong>SILAY CITY GOVERNMENT</strong></h2>
+            <p>Persons with Disability Affairs Office</p>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h5>PERSONS WITH DISABILITY AFFAIRS OFFICE</h5>
+        <h5>ANNUAL ACCOMPLISHMENT REPORT</h5>
+    </div>
+
+    <div class="report-info">
+        <span class="info-item">Region: <span class="underline"></span></span>
+        <span class="info-item">Persons with Disability Statistics: <span class="underline"></span></span>
+        <span class="info-item">Address: <span class="underline address-underline"></span></span>
+    </div>
+
+  
+
+    ${tableHtml}
+
+</div>
+
+</body>
+</html>`;
+
+
+
 							
 							newWin.document.open();
 							newWin.document.write(docHtml);
@@ -997,6 +1090,7 @@
 					
 					html += `
 						<div class="summary">
+							<hr>
 							<h5>Report Summary</h5>
 							<div class="row">
 								<div class="col-md-6">
