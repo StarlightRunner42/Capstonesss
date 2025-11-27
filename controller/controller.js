@@ -8,6 +8,7 @@ const { User,SeniorCitizen,Barangay ,PWD,Youth } = require("../model/schema");
 const axios = require('axios');
 const path = require("path");
 const fs = require("fs");
+const { PDFDocument } = require('pdf-lib');
 
 
 exports.createUser = async (req, res) => {
@@ -558,6 +559,239 @@ exports.unarchivePwd = async (req, res) => {
       message: 'Internal Server Error',
       success: false,
       error: err.message
+    });
+  }
+};
+
+exports.generatePwdApplicationPdf = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid PWD ID'
+      });
+    }
+
+    const pwdRecord = await PWD.findById(id).lean();
+
+    if (!pwdRecord) {
+      return res.status(404).json({
+        success: false,
+        message: 'PWD record not found'
+      });
+    }
+
+    const templatePath = path.join(__dirname, '../default/pdf/PWD-APPLICATION-FORMFIELD.pdf');
+    const templateBytes = await fs.promises.readFile(templatePath);
+    const pdfDoc = await PDFDocument.load(templateBytes);
+    const form = pdfDoc.getForm();
+
+    const shouldLogDebug = process.env.NODE_ENV !== 'production';
+    const warnMissingField = (msg) => {
+      if (shouldLogDebug) {
+        console.warn(`[PWD PDF] ${msg}`);
+      }
+    };
+
+    const setText = (fieldName, value = '') => {
+      if (!fieldName) return;
+      try {
+        form.getTextField(fieldName).setText(value || '');
+      } catch (err) {
+        warnMissingField(`Text field "${fieldName}" not found`);
+      }
+    };
+
+    const setCheckbox = (fieldName, checked) => {
+      if (!fieldName) return;
+      try {
+        const field = form.getCheckBox(fieldName);
+        if (checked) {
+          field.check();
+        } else {
+          field.uncheck();
+        }
+      } catch (err) {
+        warnMissingField(`Checkbox "${fieldName}" not found`);
+      }
+    };
+
+    const setRadio = (fieldName, option) => {
+      if (!fieldName) return;
+      try {
+        const radio = form.getRadioGroup(fieldName);
+        if (option) {
+          radio.select(option);
+        } else {
+          radio.clear();
+        }
+      } catch (err) {
+        warnMissingField(`Radio group "${fieldName}" not found`);
+      }
+    };
+
+    const formatDate = (value) => {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const month = `${date.getMonth() + 1}`.padStart(2, '0');
+      const day = `${date.getDate()}`.padStart(2, '0');
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
+    };
+
+    const civilStatusMap = {
+      'Single': 'Single',
+      'Single but Head of the Family': 'Single',
+      'Separated': 'Separated',
+      'Cohabitation (live-in)': 'Cohabitation livein',
+      'Married': 'Married',
+      'Widow/er': 'Widower',
+      'Widowed': 'Widower'
+    };
+
+    const educationMap = {
+      'Not Attended School': { radio: 'None', checks: [] },
+      'Elementary Level': { radio: 'Elementary', checks: [] },
+      'Elementary Graduate': { radio: 'Elementary', checks: [] },
+      'High School Graduate': { radio: 'Junior High School', checks: ['Senior High School'] },
+      'Vocational': { radio: 'Junior High School', checks: ['Vocational'] },
+      'College Level': { radio: 'Junior High School', checks: ['College'] },
+      'College Graduate': { radio: 'Junior High School', checks: ['College'] },
+      'Post Graduate': { radio: 'Junior High School', checks: ['College', 'Post Graduate'] }
+    };
+
+    const employmentStatusMap = {
+      'Employee': 'Employed',
+      'Employed': 'Employed',
+      'Unemployed': 'Unemployed',
+      'Self-employed': 'Selfemployed',
+      'Selfemployed': 'Selfemployed'
+    };
+
+    const disabilityFieldMap = {
+      'Deaf or Hard of Hearing': 'Deaf or Hard of Hearing',
+      'Intellectual Disability': 'Intellectual Disability',
+      'Learning Disability': 'Learning Disability',
+      'Mental Disability': 'Mental Disablity',
+      'Physical Disability (Orthopedic)': 'Physical Disability',
+      'Psychosocial Disability': 'Psychosocial Disability',
+      'Speech and Language Impairment': 'Speech and Language Impairment',
+      'Visual Disability': 'Visual Disability',
+      'Cancer (RA11215)': 'Cancer RA11215',
+      'Rare Disease (RA10747)': 'Rare Disease RA10747'
+    };
+
+    const causeFieldMap = {
+      'Congenital / Inborn': 'Congenital  Inborn',
+      'Acquired': 'Acquired',
+      'Chronic Illness': 'Chronic Illness',
+      'Injury': 'Injury',
+      'Autism': 'Autism',
+      'ADHD': 'ADHD',
+      'Cerebral Palsy': 'Cerebral Palsy',
+      'Down Syndrome': 'Down Syndrome'
+    };
+
+    // Personal information
+    setText('LAST NAME', pwdRecord.last_name || '');
+    setText('FIRST NAME', pwdRecord.first_name || '');
+    setText('MIDDLE NAME', pwdRecord.middle_name || 'N/A');
+    setText('SUFFIX', '');
+    setText('Barangay', [pwdRecord.barangay, pwdRecord.purok].filter(Boolean).join(' / '));
+    setText('DATE OF BIRTH', formatDate(pwdRecord.birthday));
+
+    setCheckbox('Female', pwdRecord.gender === 'Female');
+    setCheckbox('Male', pwdRecord.gender === 'Male');
+    setRadio('7 CIVIL STATUS', civilStatusMap[pwdRecord.civil_status] || '');
+
+    // Contact information
+    const primaryContact = Array.isArray(pwdRecord.contacts) && pwdRecord.contacts.length > 0
+      ? pwdRecord.contacts[0]
+      : null;
+
+    setText('Landline No', primaryContact?.phone || '');
+    setText('Mobile No', primaryContact?.phone || '');
+    setText('Email Address', primaryContact?.email || '');
+
+    // Education & employment
+    const educationSelection = educationMap[pwdRecord.education_level] || { radio: 'Junior High School', checks: [] };
+    setRadio('12 EDUCATIONAL ATTAINMENT', educationSelection.radio);
+    ['Senior High School', 'College', 'Vocational', 'Post Graduate'].forEach(option => {
+      const shouldCheck = educationSelection.checks.includes(option);
+      setCheckbox(option, shouldCheck);
+    });
+
+    setRadio('13 STATUS OF EMPLOYMENT', employmentStatusMap[pwdRecord.employment_status] || '');
+    setRadio('13 a CATEGORY OF EMPLOYMENT', pwdRecord.employment_category || '');
+    setText('Employment Category', pwdRecord.employment_type || '');
+
+    // ID numbers
+    setText('SSS NO', pwdRecord.sss_id || '');
+    setText('GSIS NO', pwdRecord.gsis_sss_no || '');
+    setText('PAGIBIG NO', '');
+    setText('PSN NO', pwdRecord.psn_no || '');
+    setText('PhilHealth NO', pwdRecord.philhealth_no || '');
+
+    // Family information
+    setText('LAST NAMEFATHERS NAME', pwdRecord.fatherLastName || '');
+    setText('FIRST NAMEFATHERS NAME', pwdRecord.fatherFirstName || '');
+    setText('MIDDLE NAMEFATHERS NAME', pwdRecord.fatherMiddleName || '');
+
+    setText('LAST NAMEMOTHERS NAME', pwdRecord.motherLastName || '');
+    setText('FIRST NAMEMOTHERS NAME', pwdRecord.motherFirstName || '');
+    setText('MIDDLE NAMEMOTHERS NAME', pwdRecord.motherMiddleName || '');
+
+    setCheckbox('APPLICANT', true);
+    setCheckbox('GUARDIAN', false);
+    setCheckbox('REPRESENTATTIVE', false);
+
+    // Disability details
+    Object.values(disabilityFieldMap).forEach(fieldName => setCheckbox(fieldName, false));
+    if (Array.isArray(pwdRecord.disability)) {
+      pwdRecord.disability.forEach(type => {
+        const targetField = disabilityFieldMap[type];
+        if (targetField) {
+          setCheckbox(targetField, true);
+        }
+      });
+    }
+
+    Object.values(causeFieldMap).forEach(fieldName => setCheckbox(fieldName, false));
+    if (Array.isArray(pwdRecord.cause_disability)) {
+      pwdRecord.cause_disability.forEach(cause => {
+        const targetField = causeFieldMap[cause];
+        if (targetField) {
+          setCheckbox(targetField, true);
+        }
+      });
+    }
+
+    // Optional "Other" text
+    if (pwdRecord.disability_other_text || pwdRecord.cause_other_text) {
+      const otherDetails = [
+        pwdRecord.disability_other_text ? `Disability: ${pwdRecord.disability_other_text}` : null,
+        pwdRecord.cause_other_text ? `Cause: ${pwdRecord.cause_other_text}` : null
+      ].filter(Boolean).join(' | ');
+      setText('15 ORGANIZATION INFORMATION', otherDetails);
+    }
+
+    form.flatten();
+    const pdfBytes = await pdfDoc.save();
+    const safeLast = (pwdRecord.last_name || 'PWD').replace(/\s+/g, '-');
+    const safeFirst = (pwdRecord.first_name || 'Record').replace(/\s+/g, '-');
+    const filename = `PWD-${safeLast}-${safeFirst}.pdf`;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${filename}"`);
+    return res.send(Buffer.from(pdfBytes));
+  } catch (error) {
+    console.error('Error generating PWD PDF:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to generate PWD PDF'
     });
   }
 };

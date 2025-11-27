@@ -251,6 +251,7 @@
 			<td>
 				<div class="action-container">
 					<button class="action action-primary view-btn" aria-label="View" data-toggle="modal" data-target="#viewModal" 
+						data-pwd-id="<%= pwd._id || pwd.id %>"
 						data-pwd='<%= JSON.stringify(pwd).replace(/'/g, "&apos;") %>'>
 						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -513,6 +514,9 @@
             </div>
             
             <div class="modal-footer flex-footer">
+				<button type="button" class="btn btn-outline-primary" id="printApplicationBtn" disabled>
+					<i data-feather="printer" style="width: 16px; height: 16px;"></i> Print Application
+				</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -820,14 +824,34 @@
 		</div>
 		</div>
 		</div>
+		<script type="application/json" id="barangays-json"><%- JSON.stringify(barangays || {}).replace(/<\/script/gi, '<\\/script') %></script>
+		<script type="application/json" id="pwds-json"><%- JSON.stringify(pwds || []).replace(/<\/script/gi, '<\\/script') %></script>
 		<script>
 			// Convert EJS data to JavaScript objects
-			const barangaysData = <%- JSON.stringify(barangays) %>;
-			const pwdsData = <%- JSON.stringify(pwds || []) %>;
+			const barangaysData = JSON.parse(document.getElementById('barangays-json').textContent || '{}');
+			const pwdsData = JSON.parse(document.getElementById('pwds-json').textContent || '[]');
 			
 			// Wait for DOM to be fully loaded
 			document.addEventListener('DOMContentLoaded', function() {
 				console.log('DOM loaded - initializing Generate Report button');
+
+				const printApplicationBtn = document.getElementById('printApplicationBtn');
+
+				if (printApplicationBtn) {
+					printApplicationBtn.addEventListener('click', function() {
+						const recordId = this.dataset.pwdId;
+						if (!recordId) {
+							alert('Please open a PWD record before printing.');
+							return;
+						}
+
+						const pdfUrl = `/pwd/${recordId}/application-pdf`;
+						const pdfWindow = window.open(pdfUrl, '_blank', 'noopener');
+						if (!pdfWindow) {
+							alert('Popup blocked! Please allow popups to view the PDF.');
+						}
+					});
+				}
 				
 				// Initialize Generate Report Button - FIXED VERSION
 				const generateReportBtn = document.getElementById('generateReportBtn');
@@ -1266,6 +1290,17 @@
 						try {
 							const pwdData = JSON.parse(this.getAttribute('data-pwd').replace(/&apos;/g, "'"));
 							console.log('PWD Data loaded:', pwdData);
+
+							const recordId = pwdData._id || pwdData.id || this.getAttribute('data-pwd-id');
+							if (printApplicationBtn) {
+								if (recordId) {
+									printApplicationBtn.dataset.pwdId = recordId;
+									printApplicationBtn.removeAttribute('disabled');
+								} else {
+									printApplicationBtn.dataset.pwdId = '';
+									printApplicationBtn.setAttribute('disabled', 'disabled');
+								}
+							}
 							
 							// Basic Information
 							document.getElementById('displayFirstName').textContent = pwdData.first_name || 'N/A';
@@ -1407,6 +1442,10 @@
 					$('body').removeClass('modal-open');
 					// Remove inline styles that might block interaction
 					$('body').css('padding-right', '');
+					if (printApplicationBtn) {
+						printApplicationBtn.dataset.pwdId = '';
+						printApplicationBtn.setAttribute('disabled', 'disabled');
+					}
 				});
 
 				// EDIT MODAL CODE - FIXED VERSION

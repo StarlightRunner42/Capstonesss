@@ -107,6 +107,7 @@ router.post('/edit-user', requireAuth, controller.editUserStatus);
 router.get('/Senior-form', requireAuth, controller.renderSeniorForm);
 
 router.get('/Pwd-form', requireAuth, controller.renderPWDForm);
+router.get('/pwd/:id/application-pdf', requireAuth, controller.generatePwdApplicationPdf);
 
 //Youth routes
 router.get('', requireAuth, (req, res) => {
