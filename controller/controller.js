@@ -759,6 +759,21 @@ exports.getOscaAnalytics = async (req, res) => {
   }
 };
 
+// Get senior citizens data for report generation (with gender information)
+exports.getSeniorCitizensForReport = async (req, res) => {
+  try {
+    const seniors = await SeniorCitizen.find(
+      { status: { $ne: 'Archived' } },
+      'identifying_information.address.barangay identifying_information.gender'
+    );
+    
+    res.json({ success: true, data: seniors });
+  } catch (err) {
+    console.error('Error fetching senior citizens for report:', err);
+    res.status(500).json({ success: false, message: 'Failed to load senior citizens data' });
+  }
+};
+
 // Analytics: PDAO (PWD) counts and gender breakdown by barangay
 exports.getPdaoAnalytics = async (req, res) => {
   try {

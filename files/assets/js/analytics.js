@@ -392,5 +392,311 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
+// Generate Report Function
+async function generateSeniorCitizensReport() {
+    try {
+        // Show loading indicator
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const originalText = generateReportBtn.innerHTML;
+        generateReportBtn.disabled = true;
+        generateReportBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Generating...';
+        
+        // Fetch all senior citizens data to get gender breakdown
+        const seniorDataResponse = await fetch('/api/senior-citizens-for-report', { credentials: 'same-origin' });
+        
+        let seniors = [];
+        if (seniorDataResponse.ok) {
+            const seniorData = await seniorDataResponse.json();
+            if (seniorData.success && seniorData.data) {
+                seniors = seniorData.data;
+            }
+        } else {
+            console.warn('Could not fetch detailed senior data');
+        }
+        
+        // Build report table HTML
+        const tableHtml = buildSeniorCitizensReportTableHtml(seniors, allData);
+        
+        // Open new window for report
+        const newWin = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
+        
+        if (!newWin) {
+            alert('Popup blocked! Please allow popups for this site to view the report.');
+            return;
+        }
+        
+        const docHtml = `<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Senior Citizens Report</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+    <style>
+        body { padding: 30px; font-family: Arial, sans-serif; }
+
+        .header-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            min-height: 130px;
+        }
+
+        .logo-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 95px;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .title-section { 
+            margin-top: 15px; 
+            text-align: center;
+        }
+
+        .report-info {
+            margin: 20px auto;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            max-width: 800px;
+            white-space: nowrap;
+        }
+
+        .info-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        .underline {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            width: 120px;
+            height: 14px;
+            vertical-align: bottom;
+            margin-left: 5px;
+        }
+
+        .address-underline {
+            width: 150px;
+        }
+
+        .generated-date {
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="text-center generated-date">
+        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+    </div>
+    
+    <div class="header-wrapper">
+        <img src="/assets/images/SilayLogo.jpg" class="logo-left">
+        <img src="/assets/images/BagongPilipinas.jpg" class="logo-right">
+
+        <div class="main-header">
+            <h4>Republic of the Philippines</h4>
+            <h2><strong>SILAY CITY GOVERNMENT</strong></h2>
+            <p>Office of Senior Citizens Affairs</p>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h5>OFFICE OF SENIOR CITIZENS AFFAIRS</h5>
+        <h5>ANNUAL ACCOMPLISHMENT REPORT</h5>
+    </div>
+
+    <div class="report-info">
+        <span class="info-item">Region: <span class="underline"></span></span>
+        <span class="info-item">Senior Citizens Statistics: <span class="underline"></span></span>
+        <span class="info-item">Address: <span class="underline address-underline"></span></span>
+    </div>
+
+    ${tableHtml}
+
+</div>
+
+</body>
+</html>`;
+        
+        newWin.document.open();
+        newWin.document.write(docHtml);
+        newWin.document.close();
+        
+        console.log('Report generated successfully');
+        
+        // Restore button state
+        if (generateReportBtn) {
+            generateReportBtn.disabled = false;
+            generateReportBtn.innerHTML = originalText;
+        }
+        
+    } catch (e) {
+        console.error('Error generating report:', e);
+        alert('Error generating report: ' + e.message);
+        
+        // Restore button state on error
+        if (generateReportBtn) {
+            generateReportBtn.disabled = false;
+            generateReportBtn.innerHTML = originalText;
+        }
+    }
+}
+
+// Build table HTML for report
+function buildSeniorCitizensReportTableHtml(seniors, barangayData) {
+    function esc(s){ 
+        return String(s === null || s === undefined ? '' : s)
+            .replace(/&/g,'&amp;')
+            .replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;'); 
+    }
+    
+    // Group seniors by barangay and count by gender
+    const barangayStats = {};
+    
+    // If we have detailed senior data, use it
+    if (seniors && seniors.length > 0) {
+        seniors.forEach(senior => {
+            const barangay = senior.identifying_information?.address?.barangay || 'Unknown';
+            const gender = (senior.identifying_information?.gender || 'Unknown').toString().toLowerCase();
+            
+            if (!barangayStats[barangay]) {
+                barangayStats[barangay] = {
+                    male: 0,
+                    female: 0,
+                    total: 0
+                };
+            }
+            
+            if (gender === 'male') {
+                barangayStats[barangay].male++;
+            } else if (gender === 'female') {
+                barangayStats[barangay].female++;
+            }
+            
+            barangayStats[barangay].total++;
+        });
+    } else {
+        // Fallback: use barangay data from analytics (no gender breakdown available)
+        allData.forEach(item => {
+            barangayStats[item.name] = {
+                male: 0,
+                female: 0,
+                total: item.oscaCount || 0
+            };
+        });
+    }
+    
+    // Sort barangays alphabetically
+    const sortedBarangays = Object.keys(barangayStats).sort();
+    
+    // Build table HTML
+    let html = `
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Barangay</th>
+                        <th>Male</th>
+                        <th>Female</th>
+                        <th>Total of Citizens</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+    
+    let grandTotalMale = 0;
+    let grandTotalFemale = 0;
+    let grandTotal = 0;
+    
+    sortedBarangays.forEach(barangay => {
+        const stats = barangayStats[barangay];
+        grandTotalMale += stats.male;
+        grandTotalFemale += stats.female;
+        grandTotal += stats.total;
+        
+        html += `
+            <tr>
+                <td><strong>${esc(barangay)}</strong></td>
+                <td>${stats.male}</td>
+                <td>${stats.female}</td>
+                <td><span class="badge bg-primary">${stats.total}</span></td>
+            </tr>`;
+    });
+    
+    // Add total row
+    html += `
+                </tbody>
+                <tfoot class="table-dark">
+                    <tr>
+                        <td><strong>TOTAL</strong></td>
+                        <td><strong>${grandTotalMale}</strong></td>
+                        <td><strong>${grandTotalFemale}</strong></td>
+                        <td><strong><span class="badge bg-success">${grandTotal}</span></strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>`;
+    
+    // Add summary
+    html += `
+        <div class="summary" style="margin-top: 20px;">
+            <hr>
+            <h5>Report Summary</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Total Senior Citizens:</strong> ${grandTotal}</li>
+                        <li><strong>Total Male:</strong> ${grandTotalMale}</li>
+                        <li><strong>Total Female:</strong> ${grandTotalFemale}</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <ul class="list-unstyled">
+                        <li><strong>Number of Barangays:</strong> ${sortedBarangays.length}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>`;
+    
+    return html;
+}
+
 // Initialize the application
 loadOscaData();
+
+// Add event listener for Generate Report button
+// Use a function that checks if DOM is ready
+(function setupGenerateReportButton() {
+    function attachListener() {
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        if (generateReportBtn) {
+            generateReportBtn.addEventListener('click', generateSeniorCitizensReport);
+        } else {
+            // Retry if button not found yet
+            setTimeout(attachListener, 100);
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', attachListener);
+    } else {
+        attachListener();
+    }
+})();

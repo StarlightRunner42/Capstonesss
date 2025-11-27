@@ -126,6 +126,7 @@ router.get('/api/analytics/osca', requireAuth, controller.getOscaAnalytics);
 router.get('/api/analytics/pdao', requireAuth, controller.getPdaoAnalytics);
 router.get('/api/analytics/youth', controller.getYouthAnalytics);
 router.get('/api/pwds', requireAuth, controller.getAllPwds);
+router.get('/api/senior-citizens-for-report', requireAuth, controller.getSeniorCitizensForReport);
 
 
 //ArcGIS routes

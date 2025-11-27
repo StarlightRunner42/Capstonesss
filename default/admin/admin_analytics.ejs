@@ -183,8 +183,13 @@
 											<div class="table-container">
 												<div class="table-header">
 													<h2 class="table-title">Barangay OSCA Table</h2>
-													<div class="search-container">
-														<input type="text" class="search-input" id="searchInput" placeholder="🔍 Search barangays...">
+													<div style="display: flex; gap: 10px; align-items: center;">
+														<div class="search-container">
+															<input type="text" class="search-input" id="searchInput" placeholder="🔍 Search barangays...">
+														</div>
+														<button id="generateReportBtn" class="btn btn-info" type="button" style="white-space: nowrap;">
+															<i data-feather="file-text"></i> Generate Report
+														</button>
 													</div>
 												</div>
 									
@@ -250,6 +255,26 @@
 									
 												<div class="chart-info" id="chartInfo">
 													<!-- Chart percentage info will be displayed here -->
+												</div>
+											</div>
+										</div>
+
+										<!-- Report Modal -->
+										<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+											<div class="modal-dialog modal-dialog-centered modal-lg">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title" id="reportModalLabel">Senior Citizens Report</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+													</div>
+													<div class="modal-body">
+														<div id="reportContent" style="white-space:pre-wrap; font-family: monospace;"></div>
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+														<button id="copyReportBtn" type="button" class="btn btn-outline-primary">Copy</button>
+														<a id="downloadReportLink" class="btn btn-primary" download="senior_citizens_report.txt">Download</a>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -343,6 +368,15 @@
 		<script type="text/javascript" src="/assets/pages/dashboard/crm-dashboard.min.js"></script>
 		<script type="text/javascript" src="/assets/js/script.js"></script>
 		<script type="text/javascript" src="/assets/js/analytics.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+		<script>
+			// Initialize Feather Icons
+			if (typeof feather !== 'undefined' && feather.replace) {
+				document.addEventListener('DOMContentLoaded', function() {
+					feather.replace();
+				});
+			}
+		</script>
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
 		<script>
