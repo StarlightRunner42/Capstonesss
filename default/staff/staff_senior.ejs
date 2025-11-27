@@ -233,11 +233,36 @@
                                                     <option value="all">All Records</option>
                                                 </select>
                                             </div>
+                                            <!-- Generate Report Button -->
+                                            <div class="filter-group" style="margin-left: 12px;">
+                                                <label>&nbsp;</label>
+                                                <button id="generateReportBtn" class="btn btn-info" type="button">
+                                                    <i data-feather="file-text"></i> Generate Report
+                                                </button>
+                                            </div>
                                         </div>
                                         
-                            
-                                        
                                         <% if (seniorCitizens && seniorCitizens.length > 0) { %>
+                                            <!-- Report Modal -->
+                                            <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="reportModalLabel">Senior Citizens Report</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div id="reportContent" style="white-space:pre-wrap; font-family: monospace;"></div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button id="copyReportBtn" type="button" class="btn btn-outline-primary">Copy</button>
+                                                            <a id="downloadReportLink" class="btn btn-primary" download="senior_citizens_report.txt">Download</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        
                                             <table id="example" class="display" style="width:100%">
                                                 <thead>
                                                     <tr>
@@ -772,6 +797,253 @@
         
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Generate Report Button
+            const generateReportBtn = document.getElementById('generateReportBtn');
+            
+            if (generateReportBtn) {
+                generateReportBtn.addEventListener('click', function() {
+                    try {
+                        // Build the report table HTML
+                        const tableHtml = buildSeniorCitizensReportTableHtml(seniorCitizensData);
+                        
+                        // Open new window for report
+                        const newWin = window.open('', '_blank', 'width=1200,height=800,scrollbars=yes');
+                        
+                        if (!newWin) {
+                            alert('Popup blocked! Please allow popups for this site to view the report.');
+                            return;
+                        }
+                        
+                        const docHtml = `<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Senior Citizens Report</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="stylesheet" href="/bower_components/bootstrap/css/bootstrap.min.css">
+    <style>
+        body { padding: 30px; font-family: Arial, sans-serif; }
+
+        .header-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+            min-height: 130px;
+        }
+
+        .logo-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 95px;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 120px;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .title-section { 
+            margin-top: 15px; 
+            text-align: center;
+        }
+
+        .report-info {
+            margin: 20px auto;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            max-width: 800px;
+            white-space: nowrap;
+        }
+
+        .info-item {
+            display: inline-block;
+            margin: 0 15px;
+        }
+
+        .underline {
+            display: inline-block;
+            border-bottom: 1px solid #000;
+            width: 120px;
+            height: 14px;
+            vertical-align: bottom;
+            margin-left: 5px;
+        }
+
+        .address-underline {
+            width: 150px;
+        }
+
+        .generated-date {
+            margin-top: 10px;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="text-center generated-date">
+        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
+    </div>
+    
+    <div class="header-wrapper">
+        <img src="/assets/images/SilayLogo.jpg" class="logo-left">
+        <img src="/assets/images/BagongPilipinas.jpg" class="logo-right">
+
+        <div class="main-header">
+            <h4>Republic of the Philippines</h4>
+            <h2><strong>SILAY CITY GOVERNMENT</strong></h2>
+            <p>Office of Senior Citizens Affairs</p>
+        </div>
+    </div>
+
+    <div class="title-section">
+        <h5>OFFICE OF SENIOR CITIZENS AFFAIRS</h5>
+        <h5>ANNUAL ACCOMPLISHMENT REPORT</h5>
+    </div>
+
+    <div class="report-info">
+        <span class="info-item">Region: <span class="underline"></span></span>
+        <span class="info-item">Senior Citizens Statistics: <span class="underline"></span></span>
+        <span class="info-item">Address: <span class="underline address-underline"></span></span>
+    </div>
+
+    ${tableHtml}
+
+</div>
+
+</body>
+</html>`;
+                        
+                        newWin.document.open();
+                        newWin.document.write(docHtml);
+                        newWin.document.close();
+                        
+                        console.log('Report generated successfully');
+                        
+                    } catch (e) {
+                        console.error('Error generating report:', e);
+                        alert('Error generating report: ' + e.message);
+                    }
+                });
+            }
+
+            // Build table HTML for report
+            function buildSeniorCitizensReportTableHtml(seniors) {
+                function esc(s){ 
+                    return String(s === null || s === undefined ? '' : s)
+                        .replace(/&/g,'&amp;')
+                        .replace(/</g,'&lt;')
+                        .replace(/>/g,'&gt;'); 
+                }
+                
+                // Group seniors by barangay and count by gender
+                const barangayStats = {};
+                
+                seniors.forEach(senior => {
+                    const barangay = senior.identifying_information?.address?.barangay || 'Unknown';
+                    const gender = (senior.identifying_information?.gender || 'Unknown').toString().toLowerCase();
+                    
+                    if (!barangayStats[barangay]) {
+                        barangayStats[barangay] = {
+                            male: 0,
+                            female: 0,
+                            total: 0
+                        };
+                    }
+                    
+                    if (gender === 'male') {
+                        barangayStats[barangay].male++;
+                    } else if (gender === 'female') {
+                        barangayStats[barangay].female++;
+                    }
+                    
+                    barangayStats[barangay].total++;
+                });
+                
+                // Sort barangays alphabetically
+                const sortedBarangays = Object.keys(barangayStats).sort();
+                
+                // Build table HTML
+                let html = `
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Barangay</th>
+                                    <th>Male</th>
+                                    <th>Female</th>
+                                    <th>Total of Citizens</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                
+                let grandTotalMale = 0;
+                let grandTotalFemale = 0;
+                let grandTotal = 0;
+                
+                sortedBarangays.forEach(barangay => {
+                    const stats = barangayStats[barangay];
+                    grandTotalMale += stats.male;
+                    grandTotalFemale += stats.female;
+                    grandTotal += stats.total;
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${esc(barangay)}</strong></td>
+                            <td>${stats.male}</td>
+                            <td>${stats.female}</td>
+                            <td><span class="badge bg-primary">${stats.total}</span></td>
+                        </tr>`;
+                });
+                
+                // Add total row
+                html += `
+                            </tbody>
+                            <tfoot class="table-dark">
+                                <tr>
+                                    <td><strong>TOTAL</strong></td>
+                                    <td><strong>${grandTotalMale}</strong></td>
+                                    <td><strong>${grandTotalFemale}</strong></td>
+                                    <td><strong><span class="badge bg-success">${grandTotal}</span></strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>`;
+                
+                // Add summary
+                html += `
+                    <div class="summary" style="margin-top: 20px;">
+                        <hr>
+                        <h5>Report Summary</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Total Senior Citizens:</strong> ${grandTotal}</li>
+                                    <li><strong>Total Male:</strong> ${grandTotalMale}</li>
+                                    <li><strong>Total Female:</strong> ${grandTotalFemale}</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-unstyled">
+                                    <li><strong>Number of Barangays:</strong> ${sortedBarangays.length}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>`;
+                
+                return html;
+            }
+            
             // Get select elements
             const barangaySelect = document.getElementById('barangay-filter');
             const purokSelect = document.getElementById('purok-filter');
